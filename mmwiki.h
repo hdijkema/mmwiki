@@ -322,15 +322,10 @@ public:
                         " font-size: 12pt;"
                         " margin-left: 5%;"
                         " margin-right: 5%;"
-                        " margin-bottom: 3em;"
                         " color: black;"
                         "}"
 
-                        ".mm {"
-                        " font-size: 85%;"
-                        "}"
-
-                        "h1, h2, h3, h4, h5 { font-family: Arial,sans-serif; color: #2d8659; }"
+                        "h1, h2, h3, h4, h5 { font-family: Arial,sans-serif; color: #2d8659;margin-bottom: 0;margin-top:1em; }"
                         "h1 { font-size: 150%;text-align: center; }"
                         "h2 { font-size: 125%;text-align: center; }"
                         "h3, h4, h5 { font-style: bold;padding-bottom:0.5em;margin-bottom:0; }"
@@ -342,7 +337,9 @@ public:
                         "span.rubric, span.rubric2 { font-size: 100%;font-weight: bold; }"
                         "span.rubric2 { font-style: italic; }"
 
-                        "p { margin-bottom: 0.5em; }"
+                        "p { margin-bottom: 0.5em;margin-top:0; }"
+                        "ul, ol { margin-top: 0; margin-bottom: 0.5em; }"
+                        "ul ul, ol ol, ul ol, ol ul { margin-bottom: 0; }"
 
                         "span.symptom:hover { background: #d0d0d0;transition: background 1s; }"
 
@@ -356,8 +353,8 @@ public:
                         "span.def-tooltip { min-width: 10em;max-width: 20em; }"
                         "span.tooltip a, .tooltip a { color: #fff; }"
 
-                        "span.link, span.link a { text-decoration:none; }"
-                        "span.link_hover { text-decoration:underline; }"
+                        "span.link, span.link a { text-decoration:none;color:inherit; }"
+                        "span.link_hover, span.link_hover a { text-decoration:underline;color:inherit; }"
 
                         "span.grade2, span.grade2 a { color: #1B83FA; }"
                         "span.grade3, span.grade3 a { font-weight: bold; color: #aa664e; }"
@@ -394,7 +391,10 @@ public:
                         ".bigpicture { position:fixed; left: 50%; top: 10%; height: 80%; z-index: 9; display: none; }"
                         ".bigpicture img { position: relative; left: -50%; height: 100%; }"
 
-                        ".image { margin: 0.5em; }"
+                        ".image-center { margin-left:auto; margin-right: auto; }"
+                        ".image-float-left { margin:0;padding:0;float:left; }"
+                        ".image-float-right { margin:0;padding:0;float:right; }"
+                        ".image { margin: 0.5em;margin-top: 1em; }"
                         ".image .subscript { margin-top: 0.5em; text-align:center; font-size: 80%; font-style: italic; }"
                         "td .image { margin: 0; }"
 
@@ -454,24 +454,27 @@ public:
         mutable int link_id;
         MMWIKI_PROP(std::string, namePrefix, setNamePrefix)
     public:
-        virtual std::string mkLinkName(std::string name) const
+        virtual std::string mkLinkId(std::string name) const
         {
-            std::string a = "<a name=\"";
+            std::string a = namePrefix();
+            a.append(name);
+            return a;
+            /*std::string a = "<a id=\"";
             a.append(namePrefix());
             a.append(name);
-            a.append("\" />");
-            return a;
+            a.append("\" >&#8203;</a>");
+            return a;*/
         }
         virtual std::string mkLinkHRef(std::string href, std::string content) const
         {
             std::string id = "link_id_"; id.append(std::to_string(++link_id));
             std::string a = "<span class=\"link\" id=\"";
             a.append(id).append("\" >").
-                    append(content).
                     append("<a href=\"").append(href).append("\"").
                     append("onmouseenter=\"getElementById('").append(id).append("').className='link_hover';\" ").
                     append("onmouseleave=\"getElementById('").append(id).append("').className='link';\" ").
                     append(">").
+                    append(content).
                     append("&#8599;").append("</a>").
                     append("</span>");
             if (link_id > 1000000000) { link_id = 0; }
@@ -749,12 +752,14 @@ private:
     std::regex re_literals;
     std::regex re_html_implement;
     std::regex re_symptom_grade;
+    std::regex re_anchor;
     std::regex re_cleanup_open;
     std::regex re_cleanup_sym_open;
     std::regex re_cleanup_close;
     std::regex re_section;
     std::regex re_end;
     std::regex re_bullits;
+    std::regex re_width;
 
 public:
     MMWiki()
@@ -777,10 +782,12 @@ public:
         re_symptom_grade = std::regex("([234])\\[([^\\]\\[]*)\\]");
         re_section = std::regex("^\\s*:begin\\[([a-z,]+)\\]\\s*$");
         re_end = std::regex("^\\s*:end\\s*$");
+        re_anchor = std::regex("N\\[[^\\]]+\\]");
         re_cleanup_sym_open = std::regex("([CSGZRP])([A-Z]*)[{]");
         re_cleanup_open = std::regex("([234PQHNMITBRCLt^!<>]|R[234])\\[([^|]+[|]){0,1}");
         re_cleanup_close = std::regex("(\\]|[}])");
         re_bullits = std::regex("^([*12]+)\\s");
+        re_width = std::regex("([0-9.]+)(%|em|pt|mm|cm){0,1}");
 
         _min_grade = 0;
     }
@@ -1296,11 +1303,11 @@ private:
         return false;
     }
 
-    void addToc(int level, const std::string &l)
+    std::string addToc(int level, const std::string &l)
     {
         std::string toc_ref = mmwiki_mkid("head_ref", static_cast<int>(_toc.size() + 1));
         _toc.append(level, cleanupMM(l), toc_ref);
-        _html.append("<a id=\"").append(toc_ref).append("\"></a>");
+        return toc_ref;
     }
 
     std::string addPage(const std::string &p)
@@ -1308,7 +1315,7 @@ private:
         std::string pg_ref = mmwiki_mkid("page_ref", static_cast<int>(_pages.size() + 1));
         _pages.append(0, cleanupMM(p), pg_ref);
         std::string ref;
-        ref.append("<a id=\"").append(pg_ref).append("\"></a>");
+        ref.append("<a id=\"").append(pg_ref).append("\">&#8203;</a>");
         return ref;
     }
 
@@ -1408,13 +1415,18 @@ private:
     void addHead(int toc, int level, const std::string &h, const std::string &l, const std::string &cl = "")
     {
         endDiv(level, h);
-        if (toc >= 0) { addToc(toc, l); }
+        std::string toc_ref = "";
+        if (toc >= 0) { toc_ref = addToc(toc, l); }
         std::string dash = (_one_per_line && !_no_dashes) ? " dash" : "";
         std::string html_class = "";
         if (cl != "") {
             html_class.append(" class=\"").append(cl).append(dash).append("\" ");
         }
-        _html.append("<").append(h).append(html_class).append(">").
+        if (toc_ref != "") {
+            std::string a;a.append(" id=\"").append(toc_ref).append("\"");toc_ref = a;
+        }
+        _html.append("<").append(h).append(html_class).
+                append(toc_ref).append(" >").
             append(processSeq(l)).
             append("</").append(h).append(">");
         startDiv(level, h);
@@ -1436,10 +1448,12 @@ private:
         }
         endDiv(level, d);
         startDiv(level, d);
-        if (toc >= 0) { addToc(toc, r); }
+        std::string toc_ref = "";
+        if (toc >= 0) { toc_ref=addToc(toc, r); }
+        if (toc_ref != "") { std::string a;a.append(" id=\"").append(toc_ref).append("\" ");toc_ref=a; }
 
         std::string start;
-        start.append("<span class=\"").append(d).append("\">").
+        start.append("<span class=\"").append(d).append("\"").append(toc_ref).append(">").
                 append(processSeq(rubr)).
                 append("</span>");
         startSeq("", start);
@@ -1458,14 +1472,34 @@ private:
         std::string width_perc = get(1, "100");
         std::string subscript = get(2, "");
         std::string align = get(3, "center");
-        if (align != "center") { std::string a = "float:"; a.append(align).append(";");align = a; }
-        else { align = ""; }
+        std::string cl = "image-center";
+        if (align == "left") { cl = "image-float-left"; }
+        else if (align == "right") { cl = "image-float-right"; }
+        else { align = "margin-left:auto;margin-right:auto;"; }
 
         std::string src = _image_provider->getImageSrc(img);
 
-        _html.append("<div style=\"width:").
-                append(width_perc).append("%;margin:0;padding:0;").
-                append(align).append("\" >").
+        if (width_perc != "") {
+            std::string a = " style=\"width:";
+            std::smatch m;
+            if (std::regex_search(width_perc, m, re_width)) {
+                std::string w = m[1];
+                std::string unit = m[2];
+                if (unit == "") { unit = "%"; }
+                a.append(w);
+                a.append(unit);
+            } else {
+                a.append(width_perc);
+            }
+            a.append(";\" ");
+            width_perc = a;
+        } else {
+            width_perc = "";
+        }
+
+        _html.append("<div ").append(width_perc).
+                append("class=\"").append(cl).append("\"").
+                append(" >").
                 append("<div class=\"image\">").
                   append("<img src=\"").append(src).
                     append("\" style=\"width:100%;\" />");
@@ -1547,9 +1581,11 @@ private:
     // to use after wikitext has been prepared
     std::string cleanupMM(std::string s)
     {
+        s = std::regex_replace(s, re_anchor, "");
         s = std::regex_replace(s, re_cleanup_open, "");
         s = std::regex_replace(s, re_cleanup_sym_open, "");
         s = std::regex_replace(s, re_cleanup_close, "");
+
 
         std::string ns;
         applyRe(re_html_implement, s, [&ns](std::smatch &m, int) -> void {
@@ -1675,7 +1711,7 @@ private:
             case Token::REMEDY2: content = mkRemedy(2, content);content_made = true; break;
             case Token::REMEDY3: content = mkRemedy(3, content);content_made = true; break;
             case Token::REMEDY4: content = mkRemedy(4, content);content_made = true; break;
-            case Token::ANCHOR: content = mkAnchor(content);content_made = true;break;
+            case Token::ANCHOR: o = "<span id=\"";o.append(mkAnchor(content));o.append("\" >");content = "";break;
             case Token::LINK: return mkLink(t);
             case Token::RADIATES: o = "<span class=\"radiating\">@!@#187@%@@!@nbsp@%@";break;
             case Token::WORSE: o = "<span class=\"modality\">@!@lt@%@@!@nbsp@%@";break;
@@ -1765,7 +1801,7 @@ private:
 
     std::string mkAnchor(std::string &nm)
     {
-        return _link_provider->mkLinkName(nm);
+        return _link_provider->mkLinkId(nm);
     }
 
 
