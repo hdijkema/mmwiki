@@ -459,11 +459,6 @@ public:
             std::string a = namePrefix();
             a.append(name);
             return a;
-            /*std::string a = "<a id=\"";
-            a.append(namePrefix());
-            a.append(name);
-            a.append("\" >&#8203;</a>");
-            return a;*/
         }
         virtual std::string mkLinkHRef(std::string href, std::string content) const
         {

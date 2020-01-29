@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <style rel="stylesheet" href="mmwiki.css"></style>
+  <link rel="stylesheet" href="mmwiki.css"></link>
   <script src="mmwiki.js"></script>
   <title>Test</title>
 </head>
@@ -25,23 +25,25 @@
              ':local-name=Canadese Hemlockspar\n' +
              '\n' +
              ':rubric=Karakteristieken\n' +
-             'S{Werkt op de slijmvliezen; uitgesproken maagsymptomen;' +
-             'catarrale maagklachten.} S{Eigenaardige voedselvoorkeuren' +
+             'S{Werkt \\{ op I[de] slijmvliezen; uitgesproken maagsymptomen;' +
+             'catarrale maagklachten.} S{Eigenaardige voedselvoorkeuren ' +
              'en rillerigheid, typisch voor vrouwen met een gekantelde '+
-             'baarmoeder, waarschijnlijk door voedingsstoornissen & '+
-             'uitputting.} S{Bemoeilijkte ademhaling en hartwerking.}'+
+             'baarmoeder, waarschijnlijk R[Staph] door voedingsstoornissen & '+
+             'uitputting.} ' +
+             ' S{Bemoeilijkte 2[ademhaling] en 3[hartwerking].}'+
              ' S{Wil constant liggen; koude en klamme huid, koude handen;'+
              ' gevoel van grote slapte.}'+
              ' S{Gevoel alsof rechterlong en lever klein en hard zijn.}'+
-             ' S{Urethritis.} SP{Ligt met opgetrokken benen(1).}' +
+             ' SP{Urethritis.} SP{Ligt met opgetrokken benen(1).}' +
              '\n' +
              ':end\n' +
              '\n';
     var m = new MMWiki();
+    //m.setHighlightWords('koude');
     var contents = m.toHtml(txt);
     if (contents == "") { contents = "Niet gelukt"; }
     document.getElementById('mmwiki').innerHTML = contents;
   </script>
-  
+
 </body>
 </html>

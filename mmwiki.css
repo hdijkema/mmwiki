@@ -6,10 +6,10 @@ body {
   color: black;
  }
 
- h1, h2, h3, h4, h5 { font-family: Arial,sans-serif; color: #2d8659;margin-bottom: 0;margin-top:1em; }
+ h1, h2, h3, h4, h5 { font-family: Arial,sans-serif; color: #2d8659;margin-bottom: 1em;margin-top:0.5em; }
  h1 { font-size: 150%;text-align: center; }
  h2 { font-size: 125%;text-align: center; }
- h3, h4, h5 { font-style: bold;padding-bottom:0.5em;margin-bottom:0; }
+ h3, h4, h5 { font-weight: bold;padding-bottom:0.5em;margin-bottom:0; }
  h3 { font-size: 110%; }
  h4 { font-size: 105%; }
  h5 { font-size: 100%; }
