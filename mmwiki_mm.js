@@ -1,3 +1,4 @@
+// vim: ts=3 sts=3 sw=4 noet :
 /****************************************************************
 * LICENSE CC0 1.0 Universal
 * (c) 2020 Hans Dijkema
@@ -303,11 +304,14 @@ function mmwikiMakeMovable(id)
 	var isDown = false;
 
 	div.addEventListener('mousedown', function(e) {
-    		isDown = true;
-    		offset = [
-        		div.offsetLeft - e.clientX,
-        		div.offsetTop - e.clientY
-    		];
+         var y = event.clientY;
+         if (y >= div.offsetTop && y <= (div.offsetTop + 30)) {
+    		  isDown = true;
+    		  offset = [
+        		  div.offsetLeft - e.clientX,
+        		  div.offsetTop - e.clientY
+    		  ];
+         }
 		}, true);
 
 	document.addEventListener('mouseup', function() {
@@ -315,8 +319,8 @@ function mmwikiMakeMovable(id)
 	}, true);
 
 	document.addEventListener('mousemove', function(event) {
-    		event.preventDefault();
     		if (isDown) {
+    		   event.preventDefault();
         		mousePosition = { x : event.clientX, y : event.clientY };
         		div.style.left = (mousePosition.x + offset[0]) + 'px';
         		div.style.top  = (mousePosition.y + offset[1]) + 'px';

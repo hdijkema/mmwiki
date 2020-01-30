@@ -1,4 +1,4 @@
-
+// vim: ts=3 sw=3 sts=3 noet :
 /***********************************************
  MMWiki
  ***********************************************/
@@ -86,8 +86,8 @@
 	display: block;
 	border: 1px solid black;
 	background: #a0a0a0;
-	/*resize: both;
-	overflow: auto;*/
+	resize: both;
+	overflow: auto;
 }
 
 #editor {

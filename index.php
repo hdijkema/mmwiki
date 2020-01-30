@@ -1,5 +1,5 @@
-# vim: se ts=3:sts=3:sw=3:noet 
 <?php
+# vim: tabstop=3 softtabstop=0 noexpandtab shiftwidth=3
 require_once("config.php");
 ?>
 <!DOCTYPE html>
@@ -208,6 +208,18 @@ require_once("config.php");
 					
 						session.setMode("ace/mode/mmwiki");
 						session.setUseWrapMode(true);
+
+						var edit_div_width = div_editor.style.width;
+						var edit_div_height = div_editor.style.height;
+						var observer = new MutationObserver(function(m) { 
+							if (div_editor.style.width != edit_div_width ||
+								 div_editor.style.height != edit_div_height) {
+								edit_div_width = div_editor.style.width;
+								edit_div_height = div_editor.style.height;
+								editor.resize();
+							}
+						}); 
+						observer.observe(div_editor, { attributes: true });
 					
 						var timeout_handle ;
 						session.on('change', function() { 
@@ -248,8 +260,22 @@ require_once("config.php");
 							alert("Choose an image to upload first");
 						}
 					};
+
+					var close_x = 0, close_y = 0, close_w = 0, close_h = 0;
 					document.mmwiki_close_editor = function() { 
+						close_x = div_editor.style.left;
+						close_y = div_editor.style.top;
+						close_w = div_editor.style.width;
+						close_h = div_editor.style.height;
+
 						div_editor.style.height = "1.5em";
+						div_editor.style.bottom = "10px";
+						div_editor.style.left = "auto";
+						div_editor.style.top = "auto";
+						div_editor.style.right = "10px";
+						div_editor.style.width = "50%";
+						div_editor.style.resize = "none";
+
 						div_editor.style.background = "transparent";
 						div_editor.style.border = "none";
 						elem_editor.style.display = 'none';
@@ -264,7 +290,11 @@ require_once("config.php");
 						open_btn.style.display = 'inline';
 					};
 					document.mmwiki_open_editor = function() {
-						div_editor.style.height = "50%";
+						div_editor.style.left = close_x;
+						div_editor.style.top = close_y;
+						div_editor.style.width = close_w;
+						div_editor.style.height = close_h;
+						div_editor.style.resize = "both";
 						div_editor.style.background = "#a0a0a0";
 						div_editor.style.border = "1px solid black";
 						elem_editor.style.display = 'block';
