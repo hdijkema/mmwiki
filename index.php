@@ -1,6 +1,7 @@
 <?php
 # vim: tabstop=3 softtabstop=0 noexpandtab shiftwidth=3
 require_once("config.php");
+error_log(print_r($_GET, true));
 ?>
 <!DOCTYPE html>
 <html>

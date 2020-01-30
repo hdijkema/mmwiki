@@ -1,0 +1,2 @@
+RewriteEngine on
+RewriteRule ^mm[/]([^/]+)[/]([^.]+)$	/index.php?context=$1&page=$2 [L,R]
