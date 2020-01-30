@@ -1,3 +1,4 @@
+# vim: se ts=3:sts=3:sw=3:noet 
 <?php
 require_once("config.php");
 ?>
@@ -165,6 +166,8 @@ require_once("config.php");
 			var lang_code = document.getElementById('language_code');
 			var login_btn = document.getElementById('login_btn');
 			var logout_btn = document.getElementById('logout_btn');
+			var editor_created = false;
+			var editor;
 
 			var logged_in = mmwikiCookie('logged-in');
 			
@@ -197,15 +200,17 @@ require_once("config.php");
 					
 					elem_editor.innerHTML = contents;
 					div_editor.style.display = 'block';
+				
+					if (!editor_created) {
+						editor = ace.edit("editor");
+						mmwikiMakeMovable('mm_edit');
+						var session = editor.getSession();
 					
-					var editor = ace.edit("editor");
-					var session = editor.getSession();
+						session.setMode("ace/mode/mmwiki");
+						session.setUseWrapMode(true);
 					
-					session.setMode("ace/mode/mmwiki");
-					session.setUseWrapMode(true);
-					
-					var timeout_handle ;
-					session.on('change', function() { 
+						var timeout_handle ;
+						session.on('change', function() { 
 											if (timeout_handle) {
 												clearTimeout(timeout_handle);
 											}
@@ -218,6 +223,7 @@ require_once("config.php");
 												}, 2000);
 											}
 							  );
+					}
 					document.mmwiki_save = function() { 
 						mmwikiSave(context, page, editor.getValue(), function() { 
 							save_btn.disabled = true;

@@ -264,6 +264,8 @@ function mmwikiLanguage()
 	} else {
 		var userLang = navigator.language || navigator.userLanguage; 
 		if (userLang) {
+			var idx = userLang.indexOf('-');
+			if (idx >= 0) { userLang = userLang.substr(0, idx); }
 			return userLang;
 		} else {
 			return "en";
@@ -293,3 +295,31 @@ function mmwikiCookie(cname) {
   return "";
 }
 
+function mmwikiMakeMovable(id)
+{
+	var mousePosition;
+	var offset = [0,0];
+	var div = document.getElementById(id);
+	var isDown = false;
+
+	div.addEventListener('mousedown', function(e) {
+    		isDown = true;
+    		offset = [
+        		div.offsetLeft - e.clientX,
+        		div.offsetTop - e.clientY
+    		];
+		}, true);
+
+	document.addEventListener('mouseup', function() {
+    		isDown = false;
+	}, true);
+
+	document.addEventListener('mousemove', function(event) {
+    		event.preventDefault();
+    		if (isDown) {
+        		mousePosition = { x : event.clientX, y : event.clientY };
+        		div.style.left = (mousePosition.x + offset[0]) + 'px';
+        		div.style.top  = (mousePosition.y + offset[1]) + 'px';
+    		}
+	}, true);
+}
