@@ -6,10 +6,11 @@
 
 :begin[en]
 
-:head=Index
+:head=Remedy Index
 
-:head2=A
 
-* R[Abrot]
+:head=A
+ R[Abrot]
 
 :end
+

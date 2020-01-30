@@ -1382,7 +1382,7 @@ private:
         std::string cell_class;
 
         if (parts.size() > 0) align = mmwiki_trim(mmwiki_toLower(parts[0]));
-        if (parts.size() > 1) cell_class = mmwiki_trim(mmwiki_toLower(parts[1]));
+        if (parts.size() > 1) cell_class = mmwiki_trim(parts[1]);
 
         if (align == "r") { align = "right"; }
         else if (align == "c") { align = "center"; }

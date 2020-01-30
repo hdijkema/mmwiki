@@ -1,0 +1,256 @@
+/***********************************************
+ Specific css for Wiki pages
+ ***********************************************/
+ 
+td.def {
+	vertical-align: middle;
+}
+
+td.def p {
+	font-family: courier, monotype;
+	padding-left: 0.5em;
+	font-size:80%;
+	margin: 0;
+}
+
+table.center {
+	margin-left:auto;
+	margin-right:auto;
+}
+ 
+table.small {
+	font-size: 80%;
+}
+
+table.compact p {
+	margin: 0;
+}
+
+ 
+div.code {
+	background: #d0d0d0;
+	padding: 0.5em;
+	margin-left: 2em;
+	margin-right: 2em;
+}
+
+span.code {
+	background: #d0d0d0;
+	padding-left: 0.1em;
+	padding-right: 0.1em;
+}
+ 
+div.wiki-inhoud {
+	float: left;
+	margin-left: -30%;
+	width: 28%;
+	position: fixed;
+	overflow: auto;
+}
+
+div.wiki-tekst {
+	width: 70%;
+	height: 100%;
+	margin-left: 30%;
+}
+
+div.citaat {
+	margin-left: 10%;
+	margin-right: 10%;
+}
+
+div.clear {
+	clear: both;
+}
+
+div.small {
+	font-size: 9pt;
+}
+
+div.right {
+	clear: both;
+	float: right;
+}
+
+div.quote {
+	margin-left: 2em;
+	margin-right: 2em;
+}
+
+div.wiki-tekst table {
+	border-collapse: collapse;
+	min-width: 50%;
+}
+
+span.page_number {
+	color: #ff0000;
+	font-weight: bold;
+	border: 1px solid #ff0000;
+}
+
+a.src {
+	text-decoration: none;
+	color: black;
+}
+
+.wiki img {
+  box-shadow: 0px 0px 7pt 2pt #c0c0c0;
+}
+
+.wiki td img, .wiki th img, .wiki .logo img {
+  box-shadow: none;
+}
+
+/***********************************************
+ Titlepage
+ ***********************************************/
+
+.titlepage {
+	margin-top: 3em;
+}
+
+.titlepage h1 {
+	font-size: 130%;
+	text-align: center;
+}
+
+.titlepage img {
+	display: block;
+	height: 50vh;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.titlepage .remedy {
+	margin-top: 0.5em;
+	margin-bottom: 1em;
+	padding-top: 0.5em;
+	text-align: center;
+}
+
+.titlepage .remedy a {
+	text-decoration: none;
+	color: #2d8659;
+	font-style: italic;
+	font-size: 120%;
+}
+
+.titlepage .remedy a:hover {
+	border-bottom: 1px solid #2d8659;
+}
+
+/***********************************************
+ Header 
+ ***********************************************/
+
+.header {
+	position: fixed;
+    top: 0;
+	background: white;
+	z-index: 9999;
+}
+
+.header span.book {
+	font-size: 65%;
+	margin-left: -15%;
+	color: #404040;
+	white-space: nowrap;
+}
+
+.header span.book a {
+	text-decoration: none;
+	color: #008000;
+}
+
+/***********************************************
+ Opus pages
+ ***********************************************/
+
+a.opus {
+	text-decoration: none;
+	color: #2d8659;
+}
+
+span.opus-note {
+	color: #1bba0b;
+	font-weight: bold;
+}
+
+span.opus-note span.text {
+	display: none;
+}
+
+span.opus-note:hover span.text {
+	display: inline-block;
+	position: absolute;
+	background-color: #555;
+	color: #ffffff;
+	padding: 0.4em;
+	z-index: 9999;
+	margin-top: 1.5em;
+	margin-left: -1em;
+	margin-right: 1em;
+	margin-bottom: 0;
+	min-width: 40%;
+	max-width: 50%;
+	text-indent: 0;
+	font-weight: normal;
+	font-size: 12pt;
+	font-family: serif;
+	text-align: left;
+	font-style: normal;
+}
+
+/***********************************************
+ Find Script
+ ***********************************************/
+ 
+.mm_find {
+	display: inline-block;
+	vertical-align: middle;
+	z-index: 200;
+	position: fixed;
+	top: 0.5em;
+	right: 1em;
+	font-size: 0.6em;
+	margin-left: 1em;
+}
+
+.mm_find_btn {
+	display: inline-block;
+	min-height: 1em;
+	min-width: 1em;
+	max-width: 2em;
+	vertical-align: middle;
+	text-align: center;
+	border: 1px solid black;
+	background: lightgray;
+	cursor: pointer;
+	padding: 1px;
+	margin: 4px;
+	-webkit-user-select:none; 
+	-ms-user-select: none;
+}
+
+.mm_find_menu {
+	background-color: #e5e5e5; 
+	display: none;
+	float: left;
+}
+
+.mm_find_input {
+	display: inline; 
+	max-width: 80%;
+}
+
+/***********************************************
+ Debug
+ ***********************************************/
+ 
+ .debug { 
+	color: #d0d0d0;
+	text-align: center;
+	font-size: 85%;
+ }
+ 
+ 

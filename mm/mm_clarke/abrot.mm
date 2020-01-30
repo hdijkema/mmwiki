@@ -9,7 +9,6 @@
 :begin[en]
 GT{Artemisia abrotanum. Lady's Love. Southernwood. (Southern Europe.) N. O. Compositæ. Tincture of fresh leaves and stems}
 
-
 :rubric=Clinical.
 
 S{Boils.}

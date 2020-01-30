@@ -1,5 +1,5 @@
 // Class stack
-class Stack
+class MMWiki_Stack
 {
   constructor() {
     this._stack = new Array();
@@ -11,8 +11,8 @@ class Stack
   pop_back() { this._stack.pop(); return this; }
 }
 
-// Class Line
-class Line
+// Class MMWiki_Line
+class MMWiki_Line
 {
   constructor(l)
   {
@@ -46,7 +46,7 @@ class Line
   setLine(l) { this._line = l; this._line_ci = l.trim().toLowerCase(); }
 }
 
-class Source
+class MMWiki_Source
 {
   constructor()
   {
@@ -84,43 +84,43 @@ class Source
 
 }
 
-const TOKEN_NOOP = -2,
-      TOKEN_ROOT = -1,
-      TOKEN_NONE = 0,
-      TOKEN_MODIFIER = -3,
-      TOKEN_CONTENT = -4,
-      TOKEN_SYMPTOM = 100,
-      TOKEN_GROUP = 101,
-      TOKEN_RELATION = 102,
-      TOKEN_CAUSE = 103,
-      TOKEN_SENTENCE = 104,
-      TOKEN_GRADE2 = 200,
-      TOKEN_GRADE3 = 201,
-      TOKEN_GRADE4 = 202,
-      TOKEN_MODALITY = 203,
-      TOKEN_CLASSIFICATION = 204,
-      TOKEN_TENDENCY = 205,
-      TOKEN_REMEDY1 = 206,
-      TOKEN_REMEDY2 = 207,
-      TOKEN_REMEDY3 = 208,
-      TOKEN_REMEDY4 = 209,
-      TOKEN_DEFINITION = 210,
-      TOKEN_RADIATES = 211,
-      TOKEN_BETTER = 212,
-      TOKEN_WORSE = 213,
-      TOKEN_BOLD = 214,
-      TOKEN_ITALIC = 215,
-      TOKEN_PAGE = 216,
-      TOKEN_CODE = 217,
-      TOKEN_HIGHLIGHT = 218,
-      TOKEN_LINK = 219,
-      TOKEN_LITERAL = 220,
-      TOKEN_ANCHOR = 221;
+const MMWIKI_TOK_NOOP = -2,
+      MMWIKI_TOK_ROOT = -1,
+      MMWIKI_TOK_NONE = 0,
+      MMWIKI_TOK_MODIFIER = -3,
+      MMWIKI_TOK_CONTENT = -4,
+      MMWIKI_TOK_SYMPTOM = 100,
+      MMWIKI_TOK_GROUP = 101,
+      MMWIKI_TOK_RELATION = 102,
+      MMWIKI_TOK_CAUSE = 103,
+      MMWIKI_TOK_SENTENCE = 104,
+      MMWIKI_TOK_GRADE2 = 200,
+      MMWIKI_TOK_GRADE3 = 201,
+      MMWIKI_TOK_GRADE4 = 202,
+      MMWIKI_TOK_MODALITY = 203,
+      MMWIKI_TOK_CLASSIFICATION = 204,
+      MMWIKI_TOK_TENDENCY = 205,
+      MMWIKI_TOK_REMEDY1 = 206,
+      MMWIKI_TOK_REMEDY2 = 207,
+      MMWIKI_TOK_REMEDY3 = 208,
+      MMWIKI_TOK_REMEDY4 = 209,
+      MMWIKI_TOK_DEFINITION = 210,
+      MMWIKI_TOK_RADIATES = 211,
+      MMWIKI_TOK_BETTER = 212,
+      MMWIKI_TOK_WORSE = 213,
+      MMWIKI_TOK_BOLD = 214,
+      MMWIKI_TOK_ITALIC = 215,
+      MMWIKI_TOK_PAGE = 216,
+      MMWIKI_TOK_CODE = 217,
+      MMWIKI_TOK_HIGHLIGHT = 218,
+      MMWIKI_TOK_LINK = 219,
+      MMWIKI_TOK_LITERAL = 220,
+      MMWIKI_TOK_ANCHOR = 221;
 
-class Token
+class MMWiki_Token
 {
    init() {
-     this._type = TOKEN_ROOT;
+     this._type = MMWIKI_TOK_ROOT;
      this._content = "";
      this._modifier = "";
      this._start = 0;
@@ -130,7 +130,7 @@ class Token
      this._modifier_set = false;
    }
 
-   constructor(a = TOKEN_ROOT)
+   constructor(a = MMWIKI_TOK_ROOT)
    {
      this.init();
      this.setType(a);
@@ -180,7 +180,7 @@ class Token
    }
 }
 
-class Header
+class MMWiki_Header
 {
   constructor()
   {
@@ -191,9 +191,9 @@ class Header
     this._abbrev = "";
     this._latin_name = "";
     this._sources = {};
-    this._miasm = "";
-    this._tendency = "";
-    this._classification = "";
+    this._miasm = undefined;
+    this._tendency = undefined;
+    this._classification = undefined;
   }
 
   book() { return this._book; }
@@ -214,13 +214,163 @@ class Header
   setTendency(t) { this._tendency = t; }
   classification() { return this._classification; }
   setClassification(c) { this._classification = c; }
-  addSource(s) { var src = new Source();
+  addSource(s) { var src = new MMWiki_Source();
                  if (src.fromString(s)) { this._sources[src.letter()] = src; }
                }
   source(letter) { return this._sources[letter]; }
 }
 
-class LinkProvider
+class MMWiki_ImageSrc 
+{
+	constructor(auth = "", authU = "", src = "", srcU = "", lic = "", licU = "", imgSrc = "", imgAlt ="")
+	{
+		this.author = function() { return this._author; }
+		this.setAuthor = function(a) { this._author = a; }
+		this.authorUrl = function() { return this._author_url; }
+		this.setAuthorUrl = function(u) { this._author_url = u; }
+		
+		this.source = function() { return this._source; }
+		this.setSource = function(s) { this._source = s; }
+		this.sourceUrl = function() { return this._source_url; }
+		this.setSourceUrl = function(u) { this._source_url = u; }
+		
+		this.license = function() { return this._license; }
+		this.setLicense = function(l) { this._license = l; }
+		this.licenseUrl = function() { return this._license_url; }
+		this.setLicenseUrl = function(u) { this._license_url = u; }
+		
+		this.imageSrc = function() { return this._image_src; }
+		this.setImageSrc = function(u) { this._image_src = u; }
+		
+		this.imageAlt = function() { return this._image_alt; }
+		this.setImageAlt = function(a) { this._image_alt = a; }
+		
+		this.imgId = function() { return this._image_id; }
+		this.setImgId = function(id) { this._image_id = id; }
+		
+		
+		this.setAuthor(auth);
+		this.setAuthorUrl(authU);
+		this.setSourceUrl(srcU);
+		this.setLicense(lic);
+		this.setLicenseUrl(licU);
+		this.setImageSrc(imgSrc);
+		this.setImageAlt(imgAlt);
+		this.setSource(src);
+		this.setImgId("img_id");
+	}
+}
+
+class MMWiki_ImageProvider
+{
+	constructor() { }
+
+	getImageSrc(image)
+	{
+		return image;
+	}
+	
+	getImageSrcs(uniform_abbrev)
+	{
+		var imgs = new Array();
+		return imgs;
+	}
+}
+
+class MMWiki_MetaProvider
+{
+	constructor()
+	{
+		this._mmwiki = undefined;
+		this._id = 0;
+		
+		this.lbImageAuthor = function() { return "Author"; }
+		this.lbTendency = function() { return "Tendency"; }
+		this.lbClassificatoin = function() { return "Classification"; }
+		this.lbMiasm = function() { return "Miasm"; }
+		this.lbLicense = function() { return "License"; }
+		this.lbSourceInfo = function() { return "Source Information"; }
+		this.lbImage = function() { return "Picture"; }
+	}
+	
+	setMMWiki(m) { this._mmwiki = m; }
+	
+	getMeta() 
+	{
+		var h = this._mmwiki.header();
+		var img = this._mmwiki.imageProvider();
+		
+		var html = "";	
+		
+		var addRow = function(l, v) {
+			html += "<tr><td>" + l + "</td><td>" + v + "</td></tr>";
+		};
+		
+		var href = function(ref, txt) {
+			var s = "<a href=\"" + ref + "\" target=\"window\">" + txt + "</a>";
+			return s;
+		};
+		
+		html += '<div class="meta">';
+		html += '<table>';
+		
+		if (h.classification()) { addRow(this.lbClassification(), h.classification()); }
+		if (h.tendency()) { addRow(this.lbTendency(), h.tendency()); }
+		if (h.miasm()) { addRow(this.lbMiasm(), h.miasm()); }
+		
+		var img_srcs = new Array();
+		if (h.abbrev()) {
+			var abbrev = h.abbrev();
+			img_srcs = img.getImageSrcs(abbrev);
+			var i;
+			for(i = 0; i < img_srcs.length; i++) {
+				var img_src = img_srcs[i];
+				var img_id = this._id + 1;
+				this._id = img_id;
+				img_id = "abbrev_img_" + img_id.toString();
+				img_src.setImgId(img_id);
+				
+				var image = "<img onclick=\"getElementById('" +
+				            img_id + "').style.display='block';\" " +
+							"src=\"" + img_src.imageSrc() + "\"" +
+							"alt=\"" + img_src.imageAlt() + "\" />";
+				image += "<div class=\"hover\">" +
+				         "<div class=\"tooltip\">" +
+						 "<table>";
+				var save_html = html;
+				html = image;
+				addRow(this.lbImageAuthor(), href(img_src.authorUrl(), img_src.author()) + " " +
+				                             href(img_src.sourceUrl(), img_src.source()));
+				addRow(this.lbLicense(), href(img_src.licenseUrl(), img_src.license()));
+				image = html;
+				html = save_html;
+				image += "</table></div>" +
+						 this.lbSourceInfo()
+						 + "</div>";
+				
+				addRow(this.lbImage(), image);
+			}
+		}
+		
+		html += "</table>";
+		html += "</div>";
+		
+		var i;
+		for(i = 0; i < img_srcs.length; i++) {
+			var img_src = img_srcs[i];
+			var img_id = img_src.imgId();
+			html += "<div class=\"bigpicture\" id=\"" + img_id + "\" ";
+			html += "onclick=\"getElementById('" + img_id + "').style.display='none';\" >";
+			html += "<img src=\"" + img_src.imageSrc() + "\" alt=\"" + img_src.imageAlt() + "\" />";
+			html += "</div>";
+		}
+		
+		return html;
+	}
+}
+
+
+class MMWiki_LinkProvider
 {
   mkLinkHRef(link, content)
   {
@@ -228,7 +378,7 @@ class LinkProvider
   }
 }
 
-class RemedyProvider
+class MMWiki_RemedyProvider
 {
   unifyAbbrev(a)
   {
@@ -261,7 +411,7 @@ class MMWiki
       this.re_symptom_grade = /([234])\[([^\[\]]*)\]/;
       this.re_anchor = /N\[[^\]]+\]/;
 
-      this.re_section = /^\s*:begin\[([a-z, ]+)\]\s*$/m;
+      this.re_section = /^\s*:begin\[([a-z, ]+)\]\s*$/mg;
       this.re_end = /^\s*:end\s*$/m;
 
       this.re_bullits = /^([*12]+)\s/;
@@ -277,19 +427,40 @@ class MMWiki
 
       this._min_grade = 0;
 
-      this._link_provider = new LinkProvider();
-      this._remedy_provider = new RemedyProvider();
+      this._link_provider = new MMWiki_LinkProvider();
+      this._remedy_provider = new MMWiki_RemedyProvider();
+	  this._meta_provider = new MMWiki_MetaProvider();
+	  this._meta_provider.setMMWiki(this);
+	  this._img_provider = new MMWiki_ImageProvider();
     }
+	
+	header() { return this._header; }
+	
+	metaProvider() { return this._meta_provider; }
+	setMetaProvider(m) { m.setMMWiki(this);this._meta_provider = m; }
+	
+	imageProvider() { return this._img_provider; }
+	setImageProvider(p) { this._img_provider = p; }
+	
+    linkProvider() { return this._link_provider; }
+    setLinkProvider(l) { this._link_provider = l; }
+
+    remedyProvider() { return this._remedy_provider; }
+    setRemedyProvider(r) { this._remedy_provider = r; }
+	
+	minGrade() { return this._min_grade; }
+	setMinGrade(g) { this._min_grade = g; }
+	
 
     toHtml(mmwiki, one_per_line = false, language = 'en')
     {
         // init State
-        this._divs = new Stack();
-        this._div_levels = new Stack();
-        this._bullits = new Stack();
-        this._bullit_levels = new Stack();
-        this._tables_cell = new Stack();
-        this._tables_cells = new Stack();
+        this._divs = new MMWiki_Stack();
+        this._div_levels = new MMWiki_Stack();
+        this._bullits = new MMWiki_Stack();
+        this._bullit_levels = new MMWiki_Stack();
+        this._tables_cell = new MMWiki_Stack();
+        this._tables_cells = new MMWiki_Stack();
 
         this._one_per_line = one_per_line;
         this._no_dashes = false;
@@ -301,7 +472,7 @@ class MMWiki
         // Init wiki / html
         this._mmwiki = mmwiki;
         this._html = "";
-
+		
         // extract header
         this._header = this.extractHeader();
 
@@ -329,7 +500,7 @@ class MMWiki
         var lines = contents.split('\n');
         var i;
         for(i = 0; i < lines.length; i++) {
-          var line = new Line(lines[i]);
+          var line = new MMWiki_Line(lines[i]);
           var bullit_state = { level: 0, bullit: "*" };
 
           if (line.isKey(":no-dash-begin")) {
@@ -352,6 +523,31 @@ class MMWiki
             this.startDiv(-1, line.value().trim(), "div-begin");
           } else if (line.isKeyVal(":div-end")) {
             this.endDiv(-1, "div-begin");
+		  } else if (line.isKeyVal(":image")) {
+			this.endSeq();
+			this.addImage(line.value());
+		  } else if (line.isKeyVal(":table") || line.isKeyVal(":table-begin")) {
+			this.endSeq();
+			this.addTable(line.value());
+		  } else if (line.isKey(":end-table") || line.isKey(":table-end")) {
+			this.endSeq();
+			this.endTable();
+		  } else if (line.isKeyVal(":cell")) { 
+		    this.endSeq();
+			this.addCell(line.value());
+		  } else if (line.isKeyVal(":note") || line.isKeyVal(":note-begin")) {
+			this.endSeq();
+			this.startDiv(-1, "note");
+			this._seq_start += "<span class=\"note\">" + this.processSeq(line.value()) + "&nbsp;</span>";
+			this._seq_class = "first";
+		  } else if (line.isKey(":end-note") || line.isKey(":note-end")) {
+		    this.endDiv(-1, "note");
+		  } else if (line.isKey(":code")) {
+			this.endSeq();
+			this.startDiv(-1, "code");
+		  } else if (line.isKey(":end-code")) {
+			this.endSeq();
+			this.endDiv(-1, "code");
           } else if (this.isBullit(line, bullit_state)) {
             this.endSeq();
             this.startBullit(bullit_state, line);
@@ -381,11 +577,6 @@ class MMWiki
       } else {
         this._highlight_words = h;
       }
-    }
-
-    setMinGrade(g)
-    {
-      this._min_grade = g;
     }
 
     applyRe(re, s, f, f_remain) {
@@ -466,7 +657,7 @@ class MMWiki
           this._divs.pop();
           this._div_levels.pop();
         }
-        if (_this._divs.length != 0) {
+        if (this._divs.length != 0) {
           this._html += "</div><!--";
           this._html += div;
           this._html += "-->";
@@ -656,6 +847,140 @@ class MMWiki
 
       return html;
     }
+	
+	addImage(img_pars)
+	{
+		var v = img_pars.split(',');
+		
+		var get = function(idx, def) {
+			if (v.length > idx) return v[idx].trim();
+			else return def;
+		};
+		
+		var img = get(0, "");
+		var width_perc = get(1, "100");
+		var subscript = get(2, "");
+		var align = get(3, "center").toLowerCase();
+		var cl = "image-center";
+		if (align == "left") { cl = "image-float-left"; }
+		else if (align == "right") { cl = "image-float-right"; }
+		else { align = "margin-left:auto;margin-right:auto;"; }
+		
+		var src = this.imageProvider().getImageSrc(img);
+		
+		if (width_perc != "") {
+			var a = " style=\"width:";
+			var m = width_perc.match(this.re_width);
+			if (m) {
+				var w = m[1];
+				var unit = m[2];
+				if (unit == "") unit = "%";
+				a += w;
+				a += unit;
+			} else {
+				a += width_perc;
+			}
+			a += ";\" ";
+			width_perc = a;
+		} else {
+			width_perc = "";
+		}
+		
+		this._html += "<div " + width_perc + "class=\"" + cl + "\"" + " >" +
+		              "<div class=\"image\">" +
+					  "<img src=\"" + src + "\" style=\"width:100%;\" />";
+		if (subscript != "") {
+			this._html += "<div class=\"subscript\">" + subscript + "</div>";
+		}
+		this._html += "</div></div>";
+	}
+	
+	addTable(l)
+	{
+		var parts = l.split(":");
+		var percentages = "";
+		var headers = "";
+		var table_width_percentage = "";
+		var table_class = "";
+		
+		if (parts.length >= 1) percentages = parts[0].trim();
+		if (parts.length >= 2) headers = parts[1].trim();
+		if (parts.length >= 3) table_width_percentage = parts[2].trim();
+		if (parts.length >= 4) table_class = parts[3].trim();
+		
+		if (table_class != "") {
+			table_class = " class=\"" + table_class + "\" ";
+		}
+		
+		if (table_width_percentage != "") {
+			table_width_percentage = " style=\"width:" + table_width_percentage + "%;\" ";
+		}
+		
+		this._html += "<table " + table_class + table_width_percentage + "><tr>";
+		
+		var v_percentages = percentages.split(',');
+		var v_headers = headers.split(',');
+		var cells = 0;
+		var i;
+		for(i = 0; i < v_percentages.length; i++) {
+			var p = v_percentages[i].trim();
+			var h = (i >= v_headers.length) ? "" : this.processSeq(v_headers[i].trim());
+			p = p.replace("%", "");
+			this._html += "<th width=\"" + p.trim() + "%\">" + h + "</th>";
+			cells += 1;
+		}
+		this._html += "</tr>";
+		this._tables_cell.push_back(0);
+		this._tables_cells.push_back(cells);
+	}
+	
+	endTable()
+	{
+		if (!this._tables_cell.empty()) {
+			var c = this._tables_cell.back();
+			var n = this._tables_cells.back();
+			if (c > 0) {
+				while(c < n) { this._html += "<td></td>";c += 1; }
+				this._html += "</tr>";
+			}
+			this._tables_cell.pop_back();
+			this._tables_cells.pop_back();
+			this._html += "</table>";
+		}
+	}
+	
+	addCell(value)
+	{
+		var parts = value.split(":");
+		var align = "";
+		var cell_class = "";
+		
+		if (parts.length > 0) align = parts[0].toLowerCase().trim();
+		if (parts.length > 1) cell_class = parts[1].trim();
+		
+		if (align == "r") { align = "right"; }
+		else if (align == "c") { align = "center"; }
+		else { align = "left"; }
+		
+		if (cell_class != "") align += " " + cell_class;
+		
+		if (!this._tables_cell.empty()) {
+			var c = this._tables_cell.back();
+			var n = this._tables_cells.back();
+			if (c == 0) {
+				this._html += "<tr><td class=\"" + align + "\">";
+				c += 1;
+			} else if (c == n) {
+				this._html += "</td></tr><td class=\"" + align + "\">";
+				c = 1;
+			} else {
+				this._html += "</td><td class=\"" + align + "\">";
+				c += 1;
+			}
+			this._tables_cell.pop_back();
+			this._tables_cell.push_back(c);
+		}
+	}
 
     p(cl)
     {
@@ -686,38 +1011,38 @@ class MMWiki
       var sym = false;
 
       var type = t.type();
-      if (type == TOKEN_NOOP) { return ""; }
-      else if (type == TOKEN_NONE) { content_made = true; }
-      else if (type == TOKEN_ROOT) { content_made = true; }
-      else if (type == TOKEN_SYMPTOM) { cl = "symptom"; this.mkHtmlSource(modifier, function(s,e) { pre=s; post=e; }); sym = true; }
-      else if (type == TOKEN_RELATION) { cl = "relation"; this.mkHtmlSource(modifier, function(s,e) { pre=s; post=e; }); sym=true; }
-      else if (type == TOKEN_CAUSE) { cl = "cause"; this.mkHtmlSource(modifier, function(s,e) { pre=s; post=e; }); sym = true; }
-      else if (type == TOKEN_SENTENCE) { cl = "sentence"; this.mkHtmlSource(modifier, function(s,e) { pre=s; post=e; }); }
-      else if (type == TOKEN_GROUP) { cl = "group"; this.mkHtmlSource(modifier, function(s,e) { pre=s; post=e; }); }
-      else if (type == TOKEN_GRADE2) { cl = "grade2"; }
-      else if (type == TOKEN_GRADE3) { cl = "grade3"; }
-      else if (type == TOKEN_GRADE4) { cl = "grade4"; }
-      else if (type == TOKEN_MODALITY) { cl = "modality"; }
-      else if (type == TOKEN_ITALIC) { o = "<i>"; c = "</i>"; }
-      else if (type == TOKEN_BOLD) { o = "<b>"; c = "</b>"; }
-      else if (type == TOKEN_PAGE) { cl = "page-number"; }
-      else if (type == TOKEN_CODE) { cl = "code"; }
-      else if (type == TOKEN_TENDENCY) { cl = "tendency"; }
-      else if (type == TOKEN_DEFINITION) { return this.mkDefinition(t); }
-      else if (type == TOKEN_REMEDY1) { content = this.mkRemedy(1, content); content_made = true; }
-      else if (type == TOKEN_REMEDY2) { content = this.mkRemedy(2, content); content_made = true; }
-      else if (type == TOKEN_REMEDY3) { content = this.mkRemedy(3, content); content_made = true; }
-      else if (type == TOKEN_REMEDY4) { content = this.mkRemedy(4, content); content_made = true; }
-      else if (type == TOKEN_ANCHOR) { o = "<span id=\"" + this.mkAnchor(content) + "\" >"; content = ""; }
-      else if (type == TOKEN_LINK) { return this.mkLink(t); }
-      else if (type == TOKEN_RADIATES) { o = "<span class=\"radiating\">@!@#1878@%@@!@nbsp@%@"; }
-      else if (type == TOKEN_WORSE) { o = "<span class=\"modality\">@!@lt@%@@!@nbsp@%@"; }
-      else if (type == TOKEN_BETTER) { o = "<span class=\"modality\">@!@gt@%@@!@nbsp@%@"; }
-      else if (type == TOKEN_LITERAL) {  o = "["; c = "]"; }
-      else if (type == TOKEN_HIGHLIGHT) { cl = "highlight"; }
-      else if (type == TOKEN_CLASSIFICATION) { cl = "classification"; }
-      else if (type == TOKEN_MODIFIER) { content_made = true; }
-      else if (type == TOKEN_CONTENT) { content_made = true; }
+      if (type == MMWIKI_TOK_NOOP) { return ""; }
+      else if (type == MMWIKI_TOK_NONE) { content_made = true; }
+      else if (type == MMWIKI_TOK_ROOT) { content_made = true; }
+      else if (type == MMWIKI_TOK_SYMPTOM) { cl = "symptom"; this.mkHtmlSource(modifier, function(s,e) { pre=s; post=e; }); sym = true; }
+      else if (type == MMWIKI_TOK_RELATION) { cl = "relation"; this.mkHtmlSource(modifier, function(s,e) { pre=s; post=e; }); sym=true; }
+      else if (type == MMWIKI_TOK_CAUSE) { cl = "cause"; this.mkHtmlSource(modifier, function(s,e) { pre=s; post=e; }); sym = true; }
+      else if (type == MMWIKI_TOK_SENTENCE) { cl = "sentence"; this.mkHtmlSource(modifier, function(s,e) { pre=s; post=e; }); }
+      else if (type == MMWIKI_TOK_GROUP) { cl = "group"; this.mkHtmlSource(modifier, function(s,e) { pre=s; post=e; }); }
+      else if (type == MMWIKI_TOK_GRADE2) { cl = "grade2"; }
+      else if (type == MMWIKI_TOK_GRADE3) { cl = "grade3"; }
+      else if (type == MMWIKI_TOK_GRADE4) { cl = "grade4"; }
+      else if (type == MMWIKI_TOK_MODALITY) { cl = "modality"; }
+      else if (type == MMWIKI_TOK_ITALIC) { o = "<i>"; c = "</i>"; }
+      else if (type == MMWIKI_TOK_BOLD) { o = "<b>"; c = "</b>"; }
+      else if (type == MMWIKI_TOK_PAGE) { cl = "page-number"; }
+      else if (type == MMWIKI_TOK_CODE) { cl = "code"; }
+      else if (type == MMWIKI_TOK_TENDENCY) { cl = "tendency"; }
+      else if (type == MMWIKI_TOK_DEFINITION) { return this.mkDefinition(t); }
+      else if (type == MMWIKI_TOK_REMEDY1) { content = this.mkRemedy(1, content); content_made = true; }
+      else if (type == MMWIKI_TOK_REMEDY2) { content = this.mkRemedy(2, content); content_made = true; }
+      else if (type == MMWIKI_TOK_REMEDY3) { content = this.mkRemedy(3, content); content_made = true; }
+      else if (type == MMWIKI_TOK_REMEDY4) { content = this.mkRemedy(4, content); content_made = true; }
+      else if (type == MMWIKI_TOK_ANCHOR) { o = "<span id=\"" + this.mkAnchor(content) + "\" >"; content = ""; }
+      else if (type == MMWIKI_TOK_LINK) { return this.mkLink(t); }
+      else if (type == MMWIKI_TOK_RADIATES) { o = "<span class=\"radiating\">@!@#1878@%@@!@nbsp@%@"; }
+      else if (type == MMWIKI_TOK_WORSE) { o = "<span class=\"modality\">@!@lt@%@@!@nbsp@%@"; }
+      else if (type == MMWIKI_TOK_BETTER) { o = "<span class=\"modality\">@!@gt@%@@!@nbsp@%@"; }
+      else if (type == MMWIKI_TOK_LITERAL) {  o = "["; c = "]"; }
+      else if (type == MMWIKI_TOK_HIGHLIGHT) { cl = "highlight"; }
+      else if (type == MMWIKI_TOK_CLASSIFICATION) { cl = "classification"; }
+      else if (type == MMWIKI_TOK_MODIFIER) { content_made = true; }
+      else if (type == MMWIKI_TOK_CONTENT) { content_made = true; }
 
       if (this._one_per_line && !this._no_dashes && sym) {
         cl += " dash";
@@ -757,12 +1082,6 @@ class MMWiki
 	  var a = this.generateHtml(content);
       return this.linkProvider().mkLinkHRef(href, a);
     }
-
-    linkProvider() { return this._link_provider; }
-    setLinkProvider(l) { this._link_provider = l; }
-
-    remedyProvider() { return this._remedy_provider; }
-    setRemedyProvider(r) { this._remedy_provider = r; }
 
     mkDefinition(t)
     {
@@ -820,7 +1139,7 @@ class MMWiki
 
     tokenize(s)
     {
-        var root = new Token(TOKEN_ROOT);
+        var root = new MMWiki_Token(MMWIKI_TOK_ROOT);
         root.setStart(0);
         root.setEnd(s.length);
         root.setContent(s);
@@ -845,19 +1164,19 @@ class MMWiki
           var content = m[2];
           var modifier = "";
           var has_modifier = false;
-          var type = TOKEN_NONE;
+          var type = MMWIKI_TOK_NONE;
 
-          if (cmd == "2") type = TOKEN_GRADE2;
-          else if (cmd == "3") type = TOKEN_GRADE3;
-          else if (cmd == "4") type = TOKEN_GRADE4;
-          else if (cmd == "M") type = TOKEN_MODALITY;
-          else if (cmd == "I") type = TOKEN_ITALIC;
-          else if (cmd == "B") type = TOKEN_BOLD;
-          else if (cmd == "P") type = TOKEN_PAGE;
-          else if (cmd == "Q") type = TOKEN_CODE;
-          else if (cmd == "T") type = TOKEN_TENDENCY;
+          if (cmd == "2") type = MMWIKI_TOK_GRADE2;
+          else if (cmd == "3") type = MMWIKI_TOK_GRADE3;
+          else if (cmd == "4") type = MMWIKI_TOK_GRADE4;
+          else if (cmd == "M") type = MMWIKI_TOK_MODALITY;
+          else if (cmd == "I") type = MMWIKI_TOK_ITALIC;
+          else if (cmd == "B") type = MMWIKI_TOK_BOLD;
+          else if (cmd == "P") type = MMWIKI_TOK_PAGE;
+          else if (cmd == "Q") type = MMWIKI_TOK_CODE;
+          else if (cmd == "T") type = MMWIKI_TOK_TENDENCY;
           else if (cmd == "t") {
-            type = TOKEN_DEFINITION;
+            type = MMWIKI_TOK_DEFINITION;
             var idx = content.indexOf("|");
             if (idx >= 0) {
               has_modifier = true;
@@ -868,16 +1187,16 @@ class MMWiki
           else if (cmd == "R") {
             var grade = 1;
             if (t != "R") grade = parseInt(t.substr(1));
-            if (grade ==1) type = TOKEN_REMEDY1;
-            else if (grade == 2) type = TOKEN_REMEDY2;
-            else if (grade == 3) type = TOKEN_REMEDY3;
-            else if (grade == 4) type = TOKEN_REMEDY4;
+            if (grade ==1) type = MMWIKI_TOK_REMEDY1;
+            else if (grade == 2) type = MMWIKI_TOK_REMEDY2;
+            else if (grade == 3) type = MMWIKI_TOK_REMEDY3;
+            else if (grade == 4) type = MMWIKI_TOK_REMEDY4;
           }
-          else if (cmd == "H") type = TOKEN_HIGHLIGHT;
-		  else if (cmd == "C") type = TOKEN_CLASSIFICATION;
-		  else if (cmd == "!") type = TOKEN_LITERAL;
+          else if (cmd == "H") type = MMWIKI_TOK_HIGHLIGHT;
+		  else if (cmd == "C") type = MMWIKI_TOK_CLASSIFICATION;
+		  else if (cmd == "!") type = MMWIKI_TOK_LITERAL;
 		  else if (cmd == "L") {
-			  type = TOKEN_LINK;
+			  type = MMWIKI_TOK_LINK;
 			  var idx = content.indexOf("|");
 			  if (idx >= 0) {
 				  has_modifier = true;
@@ -885,24 +1204,24 @@ class MMWiki
 				  content = content.substr(idx + 1);
 			  }
 		  }
-          else if (cmd == "^") type = TOKEN_RADIATES;
-          else if (cmd == "-") type = TOKEN_WORSE;
-          else if (cmd == "+") type = TOKEN_BETTER;
+          else if (cmd == "^") type = MMWIKI_TOK_RADIATES;
+          else if (cmd == "-") type = MMWIKI_TOK_WORSE;
+          else if (cmd == "+") type = MMWIKI_TOK_BETTER;
 
-          var tok = new Token(type);
+          var tok = new MMWiki_Token(type);
           var c_start = m.index + m[1].length;
 
           if (has_modifier) {
-            var t_modifier = new Token(TOKEN_MODIFIER);
+            var t_modifier = new MMWiki_Token(MMWIKI_TOK_MODIFIER);
             t_modifier.setStart(offset + c_start);
             t_modifier.setEnd(offset + c_start + modifier.length);
             t_modifier.setContent(modifier);
 
-            var t_pipe = new Token(TOKEN_NOOP);
+            var t_pipe = new MMWiki_Token(MMWIKI_TOK_NOOP);
             t_pipe.setStart(t_modifier.end());
             t_pipe.setEnd(t_modifier.end() + 1);
 
-            var t_content = new Token(TOKEN_CONTENT);
+            var t_content = new MMWiki_Token(MMWIKI_TOK_CONTENT);
             t_content.setStart(t_pipe.end());
             t_content.setEnd(t_pipe.end() + content.length);
             t_content.setContent(content);
@@ -918,13 +1237,13 @@ class MMWiki
           tok.setStart(offset + c_start);
           tok.setEnd(offset + c_end);
 
-          var pre = new Token(TOKEN_NOOP);
+          var pre = new MMWiki_Token(MMWIKI_TOK_NOOP);
           var pre_start = m.index;
           var pre_end = c_start;
           pre.setStart(offset + pre_start);
           pre.setEnd(offset + pre_end);
 
-          var post = new Token(TOKEN_NOOP);
+          var post = new MMWiki_Token(MMWIKI_TOK_NOOP);
           var post_start = c_end;
           var post_end = pre_start + m[0].length;
           post.setStart(offset + post_start);
@@ -957,14 +1276,14 @@ class MMWiki
           var src = m[2];
           var content = m[3];
 
-          var type = TOKEN_NONE;
-          if (m_type == "S") type = TOKEN_SYMPTOM;
-          else if (m_type == "R") type = TOKEN_RELATION;
-          else if (m_type == "C") type = TOKEN_CAUSE;
-          else if (m_type == "G") type = TOKEN_GROUP;
-          else if (m_type == "Z") type = TOKEN_SENTENCE;
+          var type = MMWIKI_TOK_NONE;
+          if (m_type == "S") type = MMWIKI_TOK_SYMPTOM;
+          else if (m_type == "R") type = MMWIKI_TOK_RELATION;
+          else if (m_type == "C") type = MMWIKI_TOK_CAUSE;
+          else if (m_type == "G") type = MMWIKI_TOK_GROUP;
+          else if (m_type == "Z") type = MMWIKI_TOK_SENTENCE;
 
-          var tok = new Token(type);
+          var tok = new MMWiki_Token(type);
           tok.setContent(content);
           tok.setModifier(src);
           var c_start = m.index + m[1].length + 1 + m[2].length;
@@ -972,13 +1291,13 @@ class MMWiki
           tok.setStart(offset + c_start);
           tok.setEnd(offset + c_end);
 
-          var pre = new Token(TOKEN_NOOP);
+          var pre = new MMWiki_Token(MMWIKI_TOK_NOOP);
           var pre_start = m.index;
           var pre_end = c_start;
           pre.setStart(offset + pre_start);
           pre.setEnd(offset + pre_end);
 
-          var post = new Token(TOKEN_NOOP);
+          var post = new MMWiki_Token(MMWIKI_TOK_NOOP);
           var post_start = c_end;
           var post_end = pre_start + m[0].length;
           post.setStart(offset + post_start);
@@ -1061,7 +1380,7 @@ class MMWiki
           var tt = v[i];
           var start = tt.start();
           if (start > last_end) {
-            var nt = new Token(TOKEN_NONE);
+            var nt = new MMWiki_Token(MMWIKI_TOK_NONE);
             nt.setStart(last_end);
             nt.setEnd(start);
             nt.setContent(original.substr(nt.start(), nt.length()));
@@ -1072,7 +1391,7 @@ class MMWiki
         }
 
         if (last_end < t.end()) {
-          var nt = new Token(TOKEN_NONE);
+          var nt = new MMWiki_Token(MMWIKI_TOK_NONE);
           nt.setStart(last_end);
           nt.setEnd(t.end());
           nt.setContent(original.substr(nt.start(), nt.length()));
@@ -1091,12 +1410,12 @@ class MMWiki
 
     extractHeader()
     {
-      var h = new Header();
+      var h = new MMWiki_Header();
       var in_head = true;
       var lines = this._mmwiki.split("\n");
       var i;
       for(i = 0; i < lines.length; i++) {
-        var l = new Line(lines[i]);
+        var l = new MMWiki_Line(lines[i]);
         if (l.isKey(":begin")) { return h; }
         else if (l.isKeyVal(":book")) { h.setBook(l.value()); }
         else if (l.isKeyVal(":edition")) { h.setEdition(l.value()); }
