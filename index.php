@@ -1,3 +1,6 @@
+<?php
+require_once("config.php");
+?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -45,8 +48,6 @@
   <div id="mmwiki"><!-- This is where the generated HTML goes --></div>
   </div>
 <?php
-	require_once("config.php");
-	
 	$page = "index";
 	$context = "";
 
@@ -55,8 +56,6 @@
 	if ($d_context != "") { $d_context = "/" . $d_context; }
 
 	if (isset($_GET['page'])) { $page = $_GET['page']; }
-	if (isset($_GET['generate-remedies'])) { convertRemedies(); }
-	if (isset($_GET['generate-images'])) { convertImages(); }
 	if (isset($_GET['generate-index']) && $d_context != "") { generateIndex($d_context); }
 
 	$file = "$MMWIKI_PREFIX/mm$d_context/$page.mm";
@@ -87,81 +86,6 @@
 	<?php
 	
 	createEditor($context, $page, $file); 
-	
-	function convertRemedies()
-	{
-		global $MMWIKI_PREFIX;
-		$remedies = file_get_contents("$MMWIKI_PREFIX/remedies.index");
-		$obj = json_decode($remedies);
-		$remedies = $obj->remedies;
-		$fh = fopen("$MMWIKI_PREFIX/remedies.js", "w");
-		fputs($fh, "var mmwiki_remedies = {");
-		$comma = "";
-		foreach($remedies as $remedy) {
-			$abbrev = $remedy->a;
-			$latin_name = $remedy->n;
-			fputs($fh, "$comma '$abbrev': '$latin_name'");
-			$comma = ",";
-			if (isset($remedy->aka)) {
-				$aka = $remedy->aka;
-				foreach($aka as $aka_abbrev) {
-					fputs($fh, "$comma '$aka_abbrev': '$latin_name'");
-				}
-			}
-		}
-		fputs($fh, "};\n");
-		fclose($fh);
-	}
-	
-	function convertImages() 
-	{
-		global $MMWIKI_PREFIX;
-		$attrs = file_get_contents("$MMWIKI_PREFIX/images/_attributes.json");
-		$attrs = json_decode($attrs);
-		$imgs = file_get_contents("$MMWIKI_PREFIX/images/_images.idx");
-		$imgs = json_decode($imgs);
-
-		$images_attrs = array();
-		$abbrevs = array();
-		
-		$fh = fopen("$MMWIKI_PREFIX/images.js", "w");
-		fputs($fh, "var mmwiki_images = {");
-		$comma = "";
-		
-		foreach($attrs->attributes as $f) {
-			$img = $f->i;
-			$obj = $f->a;
-			$images_attrs[$img] = $obj;
-		}
-
-		$icomma = "";
-		foreach($imgs->files as $f) {
-			$lc_abbrev = $f->a;
-			$code = "";
-			$comma = "";
-			foreach($f->f as $img) {
-				if (isset($images_attrs[$img])) {
-					$attr = $images_attrs[$img];
-					$auth = escape($attr->a);
-					$authU = escape($attr->au);
-					$lic = escape($attr->l);
-					$licU = escape($attr->lu);
-					$srcU = escape($attr->su);
-					$imgSrc = escape("/mmwiki/images/$img");
-					$code .= "$comma new MMWiki_ImageSrc('$auth', ".
-							   "'$authU', 'Source', '$srcU', '$lic', '$licU', '$imgSrc', '$lc_abbrev'".
-							   ")";
-					$comma = ",";
-				}
-			}
-			if ($code != "") {
-				fputs($fh, "$icomma '$lc_abbrev': new Array($code)\n");
-				$icomma = ",";
-			}
-		}
-		fputs($fh, "};\n");
-		fclose($fh);
-	}
 	
 	function generateIndex($context) 
 	{

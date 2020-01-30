@@ -5,7 +5,133 @@
 ###############################################
 
 global $MMWIKI_PREFIX;
-$MMWIKI_PREFIX = "c:/xampp/htdocs/mmwiki";
+$MMWIKI_PREFIX = "/data/www/mmwiki";
+$MMWIKI_HREF_PREFIX = "";
+
+###############################################
+# Initialization & Updating
+###############################################
+
+if (!is_dir($MMWIKI_PREFIX)) {
+    configureFirst("Configure the MMWIKI_PREFIX variable in config.php firsts!");
+} else {
+  if (!is_dir("$MMWIKI_PREFIX/ace/src-min-noconflict")) {
+      mkdir("$MMWIKI_PREFIX/ace");
+      configureFirst("Download ace editor from <a href=\"https://github.com/ajaxorg/ace-builds/releases/\">Ace Releases</a> and install directory 'src-min-noconflict' under MMWIKI_PREFIX/ace");
+  }
+  if (!file_exists("$MMWIKI_PREFIX/ace/src-min-noconflict/mode-mmwiki.js")) {
+     copy("$MMWIKI_PREFIX/mode-mmwiki.js", "$MMWIKI_PREFIX/ace/src-min-noconflict/mode-mmwiki.js");
+  } else {
+     $time1 = filemtime("$MMWIKI_PREFIX/mode-mmwiki.js");
+     $time2 = filemtime("$MMWIKI_PREFIX/ace/src-min-noconflict/mode-mmwiki.js");
+     if ($time1 > $time2) {
+        copy("$MMWIKI_PREFIX/mode-mmwiki.js", "$MMWIKI_PREFIX/ace/src-min-noconflict/mode-mmwiki.js");
+     }
+  }
+
+  ## Update remedies
+
+  $time1 = filemtime("$MMWIKI_PREFIX/remedies.js");
+  $time2 = filemtime("$MMWIKI_PREFIX/remedies.index");
+  if ($time2 > $time1) { convertRemedies(); }
+
+  ## Update image index
+
+  $time1 = filemtime("$MMWIKI_PREFIX/images.js");
+  $time2 = filemtime("$MMWIKI_PREFIX/images/_images.idx");
+  $time3 = filemtime("$MMWIKI_PREFIX/images/_attributes.json");
+  if ($time2 > $time1 || $time3 > $time1) { convertImages($MMWIKI_HREF_PREFIX); }
+}
+
+###############################################
+# Update functions
+###############################################
+
+function convertRemedies()
+{
+    global $MMWIKI_PREFIX;
+    $remedies = file_get_contents("$MMWIKI_PREFIX/remedies.index");
+    $obj = json_decode($remedies);
+    $remedies = $obj->remedies;
+    $fh = fopen("$MMWIKI_PREFIX/remedies.js", "w");
+    fputs($fh, "var mmwiki_remedies = {");
+    $comma = "";
+    foreach($remedies as $remedy) {
+        $abbrev = $remedy->a;
+        $latin_name = $remedy->n;
+        fputs($fh, "$comma '$abbrev': '$latin_name'");
+        $comma = ",";
+        if (isset($remedy->aka)) {
+        $aka = $remedy->aka;
+            foreach($aka as $aka_abbrev) {
+                fputs($fh, "$comma '$aka_abbrev': '$latin_name'");
+            }
+        }
+    }
+    fputs($fh, "};\n");
+    fclose($fh);
+}
+
+function convertImages($href_prefix)
+{
+    global $MMWIKI_PREFIX;
+    $attrs = file_get_contents("$MMWIKI_PREFIX/images/_attributes.json");
+    $attrs = json_decode($attrs);
+    $imgs = file_get_contents("$MMWIKI_PREFIX/images/_images.idx");
+    $imgs = json_decode($imgs);
+
+    $images_attrs = array();
+    $abbrevs = array();
+
+    $fh = fopen("$MMWIKI_PREFIX/images.js", "w");
+    fputs($fh, "var mmwiki_images = {");
+    $comma = "";
+
+    foreach($attrs->attributes as $f) {
+        $img = $f->i;
+        $obj = $f->a;
+        $images_attrs[$img] = $obj;
+    }
+
+    $icomma = "";
+    foreach($imgs->files as $f) {
+        $lc_abbrev = $f->a;
+        $code = "";
+        $comma = "";
+        foreach($f->f as $img) {
+            if (isset($images_attrs[$img])) {
+                $attr = $images_attrs[$img];
+                $auth = escape($attr->a);
+                $authU = escape($attr->au);
+                $lic = escape($attr->l);
+                $licU = escape($attr->lu);
+                $srcU = escape($attr->su);
+                $imgSrc = escape("$href_prefix/images/$img");
+                $code .= "$comma new MMWiki_ImageSrc('$auth', ".
+                               "'$authU', 'Source', '$srcU', '$lic', '$licU', '$imgSrc', '$lc_abbrev'".
+                               ")";
+                $comma = ",";
+            }
+        }
+        if ($code != "") {
+            fputs($fh, "$icomma '$lc_abbrev': new Array($code)\n");
+            $icomma = ",";
+        }
+    }
+    fputs($fh, "};\n");
+    fclose($fh);
+}
+
+
+###############################################
+# Informational functions
+###############################################
+
+function configureFirst($msg)
+{
+    echo "<html><head><title>Configure first</title></head><body><b>$msg</b></body></html>";
+    exit(0);
+}
 
 ###############################################
 # Start session
