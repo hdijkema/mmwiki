@@ -129,6 +129,7 @@ class MMWikiMM
 			this._mmwiki.setRemedyProvider(this._rem_prov);
 			this._mmwiki.setImageProvider(this._img_prov);
 			this._context = context;
+			this._abbrev = "";
 		}
 		
 		headerHtml()
@@ -154,6 +155,8 @@ class MMWikiMM
 			var hdr = this._mmwiki.header();
 			var lp = this._link_prov;
 			var rp = this._rem_prov;
+			
+			this._abbrev = abbrev;
 
 			if (abbrev == "_con") { abbrev = "con"; }
 
@@ -164,6 +167,7 @@ class MMWikiMM
 						 
 			var h1_html = "";
 			var h_meta = "";
+			var t_html = "";
 			var context = this._context;
 			if (context.startsWith("mm_")) {
 				if (uabbrev == "Index") {
@@ -176,13 +180,61 @@ class MMWikiMM
 			
 				var meta = this._mmwiki.metaProvider();
 				h_meta = meta.getMeta();
+		   } else {
 		   }
 						  
 			var d_html = h1_html + h_meta + html;
 			
 			return d_html;
 		}
+		
+		tocHtml() 
+		{
+ 		   var context = this._context;
+		   var page = this._abbrev.toLowerCase().trim();
+		   if (context.startsWith("mm_")) {
+			   return "";
+		   } else if (page == "index") {
+			   return "";
+		   }
+
+		   var toc = this._mmwiki.toc();
+		   var i;
+		   var level = -1;
+		   var t_html = "";
+		   var lang = mmwikiLanguage();
+		   var h = "";
+		   if (lang == "nl") { h = "Inhoud"; }
+		   else { h = "Contents"; }
+		   
+		   t_html += "<h3>" + h + "</h3>"
+		   for(i = 0; i < toc.size(); i++) {
+			   var lvl = toc.level(i);
+			   if (lvl > level) {
+				   while(level < lvl) { 
+						t_html += "<ul>";
+						level += 1;
+				   }
+			   } else if (lvl == level) {
+				   // do nothing
+			   } else {
+				   while(level > lvl) {
+					   t_html += "</ul>";
+					   level -= 1;
+				   }
+			   }
+			   t_html += "<li><a href=\"#" + toc.tocRef(i) + "\">" + toc.tocTxt(i) + "</a></li>";
+		   }
+		   while (level >= 0) {
+				t_html += "</ul>";
+				level -= 1; 
+		   }
+		   t_html = "<div class=\"toc\">" + t_html + "</div>";		
+		   return t_html;
+		}
 }
+
+
 
 
 function mmwikiSave(context, page, content, f_ok, f_error)

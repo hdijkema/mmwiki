@@ -21,6 +21,7 @@ require_once("config.php");
   <body>
   <div class="mmwiki_page">
   <div id="mmwiki_hdr"><!-- This is where the generated HTML header goes--></div>
+  <div id="mmwiki_toc"><!-- Toc here --></div>
   <div class="mmwiki_edit" id="mm_edit">
 	  <div id="editor_hdr">
 			<button id="save_btn" type="button" disabled onclick="document.mmwiki_save();">Save</button>
@@ -74,12 +75,15 @@ require_once("config.php");
 	<script>
 		document.mmwiki_updater = function(txt) {
 			var abbrev = <?php echo "'$page'"; ?>; 
-			var m = new MMWikiMM(<?php echo "'$context'"; ?>);
+			var context = <?php echo "'$context'"; ?>;
+			var m = new MMWikiMM(context);
 			var lang = mmwikiLanguage();
 			var contents = m.toHtml(abbrev, txt, false, lang);
+			var toc = m.tocHtml();
 			if (contents == "") { contents = 'No content'; }
 			document.getElementById('mmwiki').innerHTML = contents;
 			document.getElementById('mmwiki_hdr').innerHTML = m.headerHtml();
+			document.getElementById('mmwiki_toc').innerHTML = toc;
 		}
 		var txt = <?php echo "'$contents'"; ?>;
 		document.mmwiki_updater(txt);

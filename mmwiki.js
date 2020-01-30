@@ -47,6 +47,34 @@ class MMWiki_Line
   setLine(l) { this._line = l; this._line_ci = l.trim().toLowerCase(); }
 }
 
+class MMWiki_Toc
+{
+	constructor()
+	{
+		this.clear();
+	}
+	
+	append(level, txt, ref)
+	{
+		this._toc_levels.push(level);
+		this._toc_txts.push(txt);
+		this._toc_refs.push(ref);
+	}
+	
+	size() { return this._toc_levels.length; }
+	empty() { return this._toc_levels.length == 0; }
+	clear() 
+	{
+		this._toc_levels = new Array();
+		this._toc_txts = new Array();
+		this._toc_refs = new Array();
+	}
+	
+	level(idx) { return this._toc_levels[idx]; }
+	tocTxt(idx) { return this._toc_txts[idx]; }
+	tocRef(idx) { return this._toc_refs[idx]; }
+}
+
 class MMWiki_Source
 {
   constructor()
@@ -406,39 +434,39 @@ class MMWiki
 
     constructor()
     {
-      this.re_prepare_modalities = /[<>]\[/;
-      this.re_html_prepare = /[<>&']/;
-      this.re_html_implement = /[@][!][@]([^@]+)[@][%][@]/;
+		this.re_prepare_modalities = /[<>]\[/;
+		this.re_html_prepare = /[<>&']/;
+		this.re_html_implement = /[@][!][@]([^@]+)[@][%][@]/;
 
-      this.re_symptom = /([CSGZR])([A-Z]*)[{]([^}{]*)[}]/;
-      this.re_markup = /([234PQHNMITBRCLt^!+-]|R[234])\[([^\[\]]*)\]/;
-      this.re_modalities = /([<>])\[([^\[\]]*)\]/;
-      this.re_symptom_grade = /([234])\[([^\[\]]*)\]/;
-      this.re_anchor = /N\[[^\]]+\]/;
+		this.re_symptom = /([CSGZR])([A-Z]*)[{]([^}{]*)[}]/;
+		this.re_markup = /([234PQHNMITBRCLt^!+-]|R[234])\[([^\[\]]*)\]/;
+		this.re_modalities = /([<>])\[([^\[\]]*)\]/;
+		this.re_symptom_grade = /([234])\[([^\[\]]*)\]/;
+		this.re_anchor = /N\[[^\]]+\]/;
 
-      this.re_section = /^\s*:begin\[([a-z, ]+)\]\s*$/mg;
-      this.re_end = /^\s*:end\s*$/m;
+		this.re_section = /^\s*:begin\[([a-z, ]+)\]\s*$/mg;
+		this.re_end = /^\s*:end\s*$/m;
 
-      this.re_bullits = /^([*12]+)\s/;
-      this.re_literals = /\\[:{}\[\]]|\[BR\]/;
+		this.re_bullits = /^([*12]+)\s/;
+		this.re_literals = /\\[:{}\[\]]|\[BR\]/;
 
-      this.re_cleanup_sym_open = /([CSGZR])([A-Z]*)[{]/;
-      this.re_cleanup_open = /([234PQHNMITBRCLt^!+-]|R[234])\[([^|]+[|]){0, 1}/;
-      this.re_cleanup_close = /(\]|[}])/;
+		this.re_cleanup_sym_open = /([CSGZR])([A-Z]*)[{]/;
+		this.re_cleanup_open = /([234PQHNMITBRCLt^!+-]|R[234])\[([^|]+[|]){0, 1}/;
+		this.re_cleanup_close = /(\]|[}])/;
 
-      this.re_width = /([0-9.]+)(%|em|pt|mm|cm){0,1}/;
+		this.re_width = /([0-9.]+)(%|em|pt|mm|cm){0,1}/;
 
-      this._highlight_words = new Array();
+		this._highlight_words = new Array();
 
-      this._min_grade = 0;
+		this._min_grade = 0;
 
-      this._link_provider = new MMWiki_LinkProvider();
-      this._remedy_provider = new MMWiki_RemedyProvider();
-	   this._meta_provider = new MMWiki_MetaProvider();
-	   this._meta_provider.setMMWiki(this);
-	   this._img_provider = new MMWiki_ImageProvider();
+		this._link_provider = new MMWiki_LinkProvider();
+		this._remedy_provider = new MMWiki_RemedyProvider();
+		this._meta_provider = new MMWiki_MetaProvider();
+		this._meta_provider.setMMWiki(this);
+		this._img_provider = new MMWiki_ImageProvider();
 
-		this._toc = new Array();
+		this._toc = new MMWiki_Toc();
     }
 	
 	header() { return this._header; }
@@ -457,6 +485,8 @@ class MMWiki
 	
 	minGrade() { return this._min_grade; }
 	setMinGrade(g) { this._min_grade = g; }
+	
+	toc() { return this._toc; }
 	
 
     toHtml(mmwiki, one_per_line = false, language = 'en')
@@ -479,6 +509,7 @@ class MMWiki
         // Init wiki / html
         this._mmwiki = mmwiki;
         this._html = "";
+		this._toc.clear();
 		
         // extract header
         this._header = this.extractHeader();
@@ -787,12 +818,17 @@ class MMWiki
     addHead(toc, level, h, l, cl = "")
     {
       this.endDiv(level, h);
+	  var toc_ref = "";
+	  if (toc >= 0) { toc_ref = this.addToc(toc, l); }
       var dash = (this._one_per_line && !this._no_dashes) ? " dash" : "";
       var html_class = "";
       if (cl != "") {
         html_class = " class=\"" + cl + dash + "\" ";
       }
-      this._html += "<" + h + html_class + ">" + this.processSeq(l) + "</" + h + ">";
+	  if (toc_ref != "") {
+		  toc_ref = " id=\"" + toc_ref + "\"";
+	  }
+      this._html += "<" + h + html_class + toc_ref + ">" + this.processSeq(l) + "</" + h + ">";
       this.startDiv(level, h);
     }
 
@@ -807,7 +843,10 @@ class MMWiki
       }
       this.endDiv(level, d);
       this.startDiv(level, d);
-      var start = "<span class=\"" + d + "\"" + ">" + this.processSeq(rubr) + "</span>";
+	  var toc_ref = "";
+	  if (toc >= 0) { toc_ref = this.addToc(toc, r); }
+	  if (toc_ref != "") { toc_ref = " id=\"" + toc_ref + "\" "; }
+      var start = "<span class=\"" + d + "\"" + toc_ref + ">" + this.processSeq(rubr) + "</span>";
       this.startSeq("", start);
     }
 
@@ -900,6 +939,51 @@ class MMWiki
 			this._html += "<div class=\"subscript\">" + subscript + "</div>";
 		}
 		this._html += "</div></div>";
+	}
+	
+	addToc(level, l)
+	{
+		var n = this._toc.size() + 1;
+		var toc_ref = "head_ref_" + n.toString();
+		this._toc.append(level, this.cleanupMM(l), toc_ref);
+		return toc_ref;
+	}
+	
+	addPage(p)
+    {
+		var n = this._page_toc.size() + 1;
+		var pg_ref = "page_ref_" + n.toString();
+		this._page_toc.append(0, this.cleanupMM(p), pg_ref);
+		var ref = "<a id=\"" + pg_ref + "\">&#8203;</a>";
+		return ref;
+    }
+	
+	cleanupMM(s) 
+	{
+		s = s.replace(this.re_anchor, "");
+		s = s.replace(this.re_cleanup_open, "");
+		s = s.replace(this.re_cleanup_sym_open, "");
+		s = s.replace(this.re_cleanup_close, "");
+		
+		var ns = "";
+		this.applyRe(this.re_html_implement, s, function(m, offset) {
+				ns += m.prefix;
+				var literal = m[1];
+				if (literal == "br") { ns += " "; }
+				else if (literal == "gt") { ns += "&gt;"; }
+				else if (literal == "lt") { ns += "&lt;"; }
+				else if (literal == "apos") { ns += "&apos;"; }
+				else if (literal == "quot") { ns += "&quot;"; }
+				else if (literal == "amp") { ns += "&amp;"; }
+				else { // assume values
+					ns += "#" + literal + ";";
+				}
+			}, function(remain, offset) {
+				ns += remain;
+			}
+		);
+		
+		return ns;
 	}
 	
 	addTable(l)
@@ -1032,7 +1116,7 @@ class MMWiki
       else if (type == MMWIKI_TOK_MODALITY) { cl = "modality"; }
       else if (type == MMWIKI_TOK_ITALIC) { o = "<i>"; c = "</i>"; }
       else if (type == MMWIKI_TOK_BOLD) { o = "<b>"; c = "</b>"; }
-      else if (type == MMWIKI_TOK_PAGE) { cl = "page-number"; }
+      else if (type == MMWIKI_TOK_PAGE) { cl = "page-number";c += this.addPage(content); }
       else if (type == MMWIKI_TOK_CODE) { cl = "code"; }
       else if (type == MMWIKI_TOK_TENDENCY) { cl = "tendency"; }
       else if (type == MMWIKI_TOK_DEFINITION) { return this.mkDefinition(t); }

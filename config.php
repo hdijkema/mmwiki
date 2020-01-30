@@ -5,7 +5,8 @@
 ###############################################
 
 global $MMWIKI_PREFIX;
-$MMWIKI_PREFIX = "/data/www/mmwiki";
+#$MMWIKI_PREFIX = "/data/www/mmwiki";
+$MMWIKI_PREFIX = "c:/xampp/htdocs/mmwiki";
 $MMWIKI_HREF_PREFIX = "";
 
 ###############################################
