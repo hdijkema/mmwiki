@@ -12,6 +12,7 @@ class MMLinkProvider
   constructor()
   {
     this._context = "";
+	 this._old_link_prov = new MMWiki_LinkProvider();
   }
 
   setContext(c)
@@ -46,6 +47,8 @@ class MMLinkProvider
 	  
 	  return "<a href=\"" + link +"\">" + content + "</a>";
   }
+
+  mkLinkId(n) { return this._old_link_prov.mkLinkId(n); }
 }
 
 class MMRemedyProvider
@@ -125,15 +128,18 @@ class MMWikiMM
 			this._mmwiki.setLinkProvider(this._link_prov);
 			this._mmwiki.setRemedyProvider(this._rem_prov);
 			this._mmwiki.setImageProvider(this._img_prov);
+			this._context = context;
 		}
 		
 		headerHtml()
 		{
 			var hdr = this._mmwiki.header();
 			var lp = this._link_prov;
+			var author = hdr.author().trim();
+			if (author != "") { author = " (" + author + ")"; }
 			var h_html = '<div class="mmwiki_hdr">' + 
 						 '<div class="left">' + 
-							lp.mkLinkHRef("wiki://index", hdr.book()) + 
+							lp.mkLinkHRef("wiki://index", hdr.book() + author) + 
 						 '</div>' +
 						 '<div class="right">' +
 							lp.mkLinkHRef("wiki://_/index", 'Main index of Materia Medica Wiki') +
@@ -157,16 +163,20 @@ class MMWikiMM
 			hdr.setLatinName(rp.getLatinName(uabbrev));
 						 
 			var h1_html = "";
-			if (uabbrev == "Index") {
-				h1_html = '<h1>Index of ' + hdr.book() + '</h1>';
-			} else {
-				h1_html = '<h1>' + 
-							  rp.getLatinName(uabbrev) + ' (' + uabbrev + ')' +
-							  '</h1>';
-			}
+			var h_meta = "";
+			var context = this._context;
+			if (context.startsWith("mm_")) {
+				if (uabbrev == "Index") {
+					h1_html = '<h1>Index of ' + hdr.book() + '</h1>';
+				} else {
+					h1_html = '<h1>' + 
+								  rp.getLatinName(uabbrev) + ' (' + uabbrev + ')' +
+								  '</h1>';
+				}
 			
-			var meta = this._mmwiki.metaProvider();
-			var h_meta = meta.getMeta();
+				var meta = this._mmwiki.metaProvider();
+				h_meta = meta.getMeta();
+		   }
 						  
 			var d_html = h1_html + h_meta + html;
 			

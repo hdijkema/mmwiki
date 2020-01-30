@@ -1,3 +1,4 @@
+// vim: ts=3 sts=3 sw=4 noet :
 // Class stack
 class MMWiki_Stack
 {
@@ -376,6 +377,10 @@ class MMWiki_LinkProvider
   {
     return "<a href=\"" + link + "\">" + content + "</a>";
   }
+
+  mkLinkId(name) {
+	 return name;
+  }
 }
 
 class MMWiki_RemedyProvider
@@ -429,9 +434,11 @@ class MMWiki
 
       this._link_provider = new MMWiki_LinkProvider();
       this._remedy_provider = new MMWiki_RemedyProvider();
-	  this._meta_provider = new MMWiki_MetaProvider();
-	  this._meta_provider.setMMWiki(this);
-	  this._img_provider = new MMWiki_ImageProvider();
+	   this._meta_provider = new MMWiki_MetaProvider();
+	   this._meta_provider.setMMWiki(this);
+	   this._img_provider = new MMWiki_ImageProvider();
+
+		this._toc = new Array();
     }
 	
 	header() { return this._header; }
@@ -1083,6 +1090,12 @@ class MMWiki
       return this.linkProvider().mkLinkHRef(href, a);
     }
 
+    mkAnchor(n)
+	 {
+		var a = this.linkProvider().mkLinkId(n);
+		return a;
+	 }
+
     mkDefinition(t)
     {
       var word = t.subTokens()[0];
@@ -1174,6 +1187,7 @@ class MMWiki
           else if (cmd == "B") type = MMWIKI_TOK_BOLD;
           else if (cmd == "P") type = MMWIKI_TOK_PAGE;
           else if (cmd == "Q") type = MMWIKI_TOK_CODE;
+			 else if (cmd == "N") type = MMWIKI_TOK_ANCHOR;
           else if (cmd == "T") type = MMWIKI_TOK_TENDENCY;
           else if (cmd == "t") {
             type = MMWIKI_TOK_DEFINITION;

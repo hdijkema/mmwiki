@@ -20,8 +20,9 @@ if (loggedIn()) {
 	$fh = fopen($file, "w");
 	fputs($fh, $content);
 	fclose($fh);
+	error_log("Written: $file");
 } else {
-	echo "NO!";
+	error_log("not logged in");
 }
 
 
