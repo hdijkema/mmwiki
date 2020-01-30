@@ -5,7 +5,7 @@ require_once("config.php");
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8"></meta>
+	<meta charset="utf-8"></meta>
 	<link rel="stylesheet" href="mmwiki.css"></link>
 	<link rel="stylesheet" href="_style.css"></link>
 	<link rel="stylesheet" href="mmwiki_mm.css"></link>
@@ -41,7 +41,7 @@ require_once("config.php");
 		<tr><td class="label">Account</td><td><input type="text" id="login-account"></td></tr>
 		<tr><td class="label">Password</td><td><input type="password" id="login-passwd"></td></tr>
 		<tr><td><button type="button" onclick="document.mmwiki_cancel_login();" >Cancel</button></td>
-		    <td><button type="button" onclick="document.mmwiki_do_login();" id="do-login">Login</button>
+			<td><button type="button" onclick="document.mmwiki_do_login();" id="do-login">Login</button>
 		</td></tr>
 		<p id="login-msg">&nbsp;</p>
 	</table>
