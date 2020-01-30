@@ -26,6 +26,8 @@
 
 :head=Materia Medica Boeken
 
+* L[wiki://mm_boericke/index|Boericke - Materia Medica]
 * L[wiki://mm_clarke/index|J.H. Clarke - A dictionary of Practical Materia Medica]
+
 
 :end

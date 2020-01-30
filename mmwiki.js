@@ -286,7 +286,7 @@ class MMWiki_MetaProvider
 		
 		this.lbImageAuthor = function() { return "Author"; }
 		this.lbTendency = function() { return "Tendency"; }
-		this.lbClassificatoin = function() { return "Classification"; }
+		this.lbClassification = function() { return "Classification"; }
 		this.lbMiasm = function() { return "Miasm"; }
 		this.lbLicense = function() { return "License"; }
 		this.lbSourceInfo = function() { return "Source Information"; }
