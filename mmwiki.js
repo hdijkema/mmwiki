@@ -654,8 +654,8 @@ class MMWiki
           this._html += "</div> <!--";
           this._html += this._divs.back();
           this._html += "-->";
-          this._divs.pop();
-          this._div_levels.pop();
+          this._divs.pop_back();
+          this._div_levels.pop_back();
         }
         if (this._divs.length != 0) {
           this._html += "</div><!--";

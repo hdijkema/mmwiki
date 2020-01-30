@@ -34,9 +34,26 @@
 
 .mmwiki_page a:hover {
 	color: #6556c7;
-	transition: color 1s;
+	transition: color 0.5s;
 }
 
+.mm-index table, .mm-index td, .mm-index th  {
+	border: none;
+}
+
+.mm-index span.remedy1 {
+	white-space: nowrap;
+}
+
+.mm-index span.remedy1 a {
+	color: #000000;
+	font-style: normal;
+}
+
+.mm-index span.remedy1 a:hover {
+	color: #6556c7;
+	transition: color 0.5s;
+}
 
 /***********************************************
  MMWiki Editing

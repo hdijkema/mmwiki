@@ -95,7 +95,9 @@ require_once("config.php");
 		$g_files = glob("$dir/*.mm");
 		$files = array();
 		foreach($g_files as $file) {
-			array_push($files, basename($file));
+			$bn = basename($file);
+			if ($bn == "_con.mm") { $bn = "con.mm"; }
+			array_push($files, $bn);
 		}
 		sort($files);
 		$letter = "";
@@ -108,17 +110,25 @@ require_once("config.php");
 		foreach($files as $file) {
 			$abbrev = str_replace(".mm", "", $file);
 			if ($abbrev != "index") {
+				if ($abbrev == "_con") { $abbrev = "con"; }
 				$abbrev = strtoupper(substr($abbrev, 0, 1)) . strtolower(substr($abbrev, 1));
 				$nletter = substr($abbrev, 0, 1);
 				if ($nletter != $letter) {
+					if ($letter != "") {
+						fputs($fh, "\n:table-end\n");
+					}
 					fputs($fh, "\n\n:head=$nletter\n");
+
 					$letter = $nletter;
 					$comma = "";
+
+					fputs($fh, "\n:table-begin=5,5,5,5,5,5,5,5,5,5::80\n");
 				}
-				fputs($fh, "$comma R[$abbrev]");
+				fputs($fh, ":cell=l\nR[$abbrev]\n");
+				$comma = ", ";
 			}
 		}
-		fputs($fh, "\n\n:end\n\n");
+		fputs($fh, "\n\n:table-end\n\n:div-end\n\n:end\n\n");
 		fclose($fh);
 	}
 	

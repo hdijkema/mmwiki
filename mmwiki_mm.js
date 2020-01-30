@@ -67,7 +67,9 @@ class MMRemedyProvider
 	
 	getLink(uabbrev) 
 	{
-		return "index.php?context=" + this._context + "&page=" + uabbrev.toLowerCase();
+		var a = uabbrev.toLowerCase();
+		if (a == "con") { a = "_con"; }
+		return "index.php?context=" + this._context + "&page=" + a;
 	}
 	
 	getLatinName(uabbrev)
@@ -145,8 +147,11 @@ class MMWikiMM
 			var hdr = this._mmwiki.header();
 			var lp = this._link_prov;
 			var rp = this._rem_prov;
+
+			if (abbrev == "_con") { abbrev = "con"; }
+
 			var uabbrev = rp.unifyAbbrev(abbrev);
-			
+
 			hdr.setAbbrev(uabbrev);
 			hdr.setLatinName(rp.getLatinName(uabbrev));
 						 
@@ -184,7 +189,7 @@ function mmwikiSave(context, page, content, f_ok, f_error)
 			f_error();
 		}
 	}
-	
+        if (page == "con") { page = "_con"; }	
 	var obj = { "context": context, "page": page, "content": content };
 	var data = JSON.stringify(obj);
 	xhr.send(data);
