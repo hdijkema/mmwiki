@@ -180,6 +180,7 @@ private:
         std::string line() const                    { return _line; }
     };
 
+public:
     class Token {
     public:
         enum Tok    { NOOP = -2, ROOT = -1, NONE = 0, MODIFIER = -3, CONTENT = -4,
