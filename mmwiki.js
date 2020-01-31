@@ -1,4 +1,4 @@
-// vim: ts=3 sts=3 sw=4 noet :
+// vim: ts=4 sts=4 sw=4 noet :
 // Class stack
 class MMWiki_Stack
 {
@@ -1271,7 +1271,7 @@ class MMWiki
           else if (cmd == "B") type = MMWIKI_TOK_BOLD;
           else if (cmd == "P") type = MMWIKI_TOK_PAGE;
           else if (cmd == "Q") type = MMWIKI_TOK_CODE;
-			 else if (cmd == "N") type = MMWIKI_TOK_ANCHOR;
+		  else if (cmd == "N") type = MMWIKI_TOK_ANCHOR;
           else if (cmd == "T") type = MMWIKI_TOK_TENDENCY;
           else if (cmd == "t") {
             type = MMWIKI_TOK_DEFINITION;
@@ -1291,7 +1291,7 @@ class MMWiki
             else if (grade == 4) type = MMWIKI_TOK_REMEDY4;
           }
           else if (cmd == "H") type = MMWIKI_TOK_HIGHLIGHT;
-		  else if (cmd == "C") type = MMWIKI_TOK_CLASSIFICATION;
+		    else if (cmd == "C") type = MMWIKI_TOK_CLASSIFICATION;
 		  else if (cmd == "!") type = MMWIKI_TOK_LITERAL;
 		  else if (cmd == "L") {
 			  type = MMWIKI_TOK_LINK;
@@ -1352,13 +1352,13 @@ class MMWiki
           me.insertToken(root, post);
 
           ss += m.prefix;
-          ss += (t.length == 2) ? "   " : "  ";
+          ss += (t.length == 2) ? "___" : "__";
           if (has_modifier) {
             ss += modifier;
-            ss += " ";
+            ss += "_";
           }
           ss += content;
-          ss += " ";
+          ss += "_";
         }, function(remain, offset) {
           ss += remain;
         });

@@ -4,6 +4,7 @@ body {
   margin-left: 5%;
   margin-right: 5%;
   color: black;
+  font-family: Arial, sans;
  }
 
  h1, h2, h3, h4, h5 { font-family: Arial,sans-serif; color: #2d8659;margin-bottom: 1em;margin-top:1em; }

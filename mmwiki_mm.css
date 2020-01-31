@@ -1,4 +1,6 @@
-/* vim: ts=3 sw=3 sts=3 noet : */
+/* 
+  vim: ts=3 sw=3 sts=3 noet : 
+*/
 /***********************************************
  MMWiki
  ***********************************************/
@@ -57,6 +59,7 @@ body {
 	margin-left: -20%;
 	margin-top: 1em;
 	width: 18%;
+	font-size: 80%;
 }
 
 .mmwiki_page a {
