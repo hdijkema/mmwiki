@@ -823,7 +823,7 @@ class MMWiki
       var dash = (this._one_per_line && !this._no_dashes) ? " dash" : "";
       var html_class = "";
 	  if (toc_ref != "") {
-		  toc_ref = "<span class=\"anchor\" id=\"" + toc_ref + "\">" + toc_ref + "</span>";
+		  toc_ref = "<span class=\"anchor\" id=\"" + toc_ref + "\"></span>";
 	  }
       if (cl != "") {
         html_class = " class=\"" + cl + dash + "\" ";
@@ -845,7 +845,7 @@ class MMWiki
       this.startDiv(level, d);
 	  var toc_ref = "";
 	  if (toc >= 0) { toc_ref = this.addToc(toc, r); }
-	  if (toc_ref != "") { toc_ref = "<span class=\"anchor\" id=\"" + toc_ref + "\" >" + toc_ref + "</span>"; }
+	  if (toc_ref != "") { toc_ref = "<span class=\"anchor\" id=\"" + toc_ref + "\" ></span>"; }
       var start = "<span class=\"" + d + "\"" + ">" + toc_ref + this.processSeq(rubr) + "</span>";
       this.startSeq("", start);
     }
@@ -954,7 +954,7 @@ class MMWiki
 		var n = this._page_toc.size() + 1;
 		var pg_ref = "page_ref_" + n.toString();
 		this._page_toc.append(0, this.cleanupMM(p), pg_ref);
-		var ref = "<span class=\"anchor\" id=\"" + pg_ref + "\">&#8203;</span>";
+		var ref = "<span class=\"anchor\" id=\"" + pg_ref + "\"></span>";
 		return ref;
     }
 	
