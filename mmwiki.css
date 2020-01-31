@@ -84,7 +84,7 @@ body {
  .clear { clear:both; }
 
  span.dash { display:block; }
- span.dash::before { content: \-\\00a0\; }
+ span.dash::before { content: "-\00a0"; }
 
  span.page-number { color: #ff0000;font-weight: bold;border: 1px solid #ff0000; }
  span.anchor { visibility: hidden; }
