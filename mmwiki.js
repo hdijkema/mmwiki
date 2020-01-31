@@ -822,13 +822,13 @@ class MMWiki
 	  if (toc >= 0) { toc_ref = this.addToc(toc, l); }
       var dash = (this._one_per_line && !this._no_dashes) ? " dash" : "";
       var html_class = "";
+	  if (toc_ref != "") {
+		  toc_ref = "<span class=\"anchor\" id=\"" + toc_ref + "\">" + toc_ref + "</span>";
+	  }
       if (cl != "") {
         html_class = " class=\"" + cl + dash + "\" ";
       }
-	  if (toc_ref != "") {
-		  toc_ref = " id=\"" + toc_ref + "\"";
-	  }
-      this._html += "<" + h + html_class + toc_ref + ">" + this.processSeq(l) + "</" + h + ">";
+      this._html += "<" + h + html_class + ">" + toc_ref + this.processSeq(l) + "</" + h + ">";
       this.startDiv(level, h);
     }
 
@@ -845,8 +845,8 @@ class MMWiki
       this.startDiv(level, d);
 	  var toc_ref = "";
 	  if (toc >= 0) { toc_ref = this.addToc(toc, r); }
-	  if (toc_ref != "") { toc_ref = " id=\"" + toc_ref + "\" "; }
-      var start = "<span class=\"" + d + "\"" + toc_ref + ">" + this.processSeq(rubr) + "</span>";
+	  if (toc_ref != "") { toc_ref = "<span class=\"anchor\" id=\"" + toc_ref + "\" >" + toc_ref + "</span>"; }
+      var start = "<span class=\"" + d + "\"" + ">" + toc_ref + this.processSeq(rubr) + "</span>";
       this.startSeq("", start);
     }
 
@@ -954,7 +954,7 @@ class MMWiki
 		var n = this._page_toc.size() + 1;
 		var pg_ref = "page_ref_" + n.toString();
 		this._page_toc.append(0, this.cleanupMM(p), pg_ref);
-		var ref = "<a id=\"" + pg_ref + "\">&#8203;</a>";
+		var ref = "<span class=\"anchor\" id=\"" + pg_ref + "\">&#8203;</span>";
 		return ref;
     }
 	
@@ -1124,7 +1124,7 @@ class MMWiki
       else if (type == MMWIKI_TOK_REMEDY2) { content = this.mkRemedy(2, content); content_made = true; }
       else if (type == MMWIKI_TOK_REMEDY3) { content = this.mkRemedy(3, content); content_made = true; }
       else if (type == MMWIKI_TOK_REMEDY4) { content = this.mkRemedy(4, content); content_made = true; }
-      else if (type == MMWIKI_TOK_ANCHOR) { o = "<span id=\"" + this.mkAnchor(content) + "\" >"; content = ""; }
+      else if (type == MMWIKI_TOK_ANCHOR) { o = "<span class=\"anchor\" id=\"" + this.mkAnchor(content) + "\" >"; content = ""; }
       else if (type == MMWIKI_TOK_LINK) { return this.mkLink(t); }
       else if (type == MMWIKI_TOK_RADIATES) { o = "<span class=\"radiating\">@!@#1878@%@@!@nbsp@%@"; }
       else if (type == MMWIKI_TOK_WORSE) { o = "<span class=\"modality\">@!@lt@%@@!@nbsp@%@"; }

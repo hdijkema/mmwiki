@@ -228,6 +228,7 @@ error_log(print_r($_GET, true));
 					
 						var timeout_handle ;
 						session.on('change', function() { 
+											save_btn.disabled = false; 
 											if (timeout_handle) {
 												clearTimeout(timeout_handle);
 											}
@@ -235,7 +236,6 @@ error_log(print_r($_GET, true));
 												elem_mmwiki.innerHTML = "Wait...";
 												var txt = editor.getValue();
 												document.mmwiki_updater(txt);
-												save_btn.disabled = false; 
 												dirty = false;
 												}, 2000);
 											}
