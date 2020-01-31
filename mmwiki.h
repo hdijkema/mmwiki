@@ -9,8 +9,7 @@
 #include <algorithm>
 #include <cctype>
 #include <sstream>
-
-#include "zcdebug.h"
+#include <mmwiki_css.h>
 
 #define MMWIKI_UNUSED(a)   (void(a))
 
@@ -209,6 +208,7 @@ private:
         bool contains(const Token &other) { return other.start() >= start() &&
                                                    other.end() <= end();
                                           }
+        bool equal(const Token &b) const { return b.start() == start() && b.end() == end(); }
         int length() { return end() - start(); }
     public:
         bool hasA(std::function<bool(const Token &t)> f) const {
@@ -316,95 +316,7 @@ public:
     public:
         virtual std::string css() const
         {
-            return std::string(
-                        "body {"
-                        " font-family: Times New Roman,serif;"
-                        " font-size: 12pt;"
-                        " margin-left: 5%;"
-                        " margin-right: 5%;"
-                        " color: black;"
-                        "}"
-
-                        "h1, h2, h3, h4, h5 { font-family: Arial,sans-serif; color: #2d8659;margin-bottom: 0;margin-top:1em; }"
-                        "h1 { font-size: 150%;text-align: center; }"
-                        "h2 { font-size: 125%;text-align: center; }"
-                        "h3, h4, h5 { font-style: bold;padding-bottom:0.5em;margin-bottom:0; }"
-                        "h3 { font-size: 110%; }"
-                        "h4 { font-size: 105%; }"
-                        "h5 { font-size: 100%; }"
-                        "div.rubric, div.rubric2 { margin-left: 1em; }"
-                        "div.rubric p:first-of-type, div.rubric2 p:first-of-type { text-indent: -1em; }	"
-                        "span.rubric, span.rubric2 { font-size: 100%;font-weight: bold; }"
-                        "span.rubric2 { font-style: italic; }"
-
-                        "p { margin-bottom: 0.5em;margin-top:0; }"
-                        "ul, ol { margin-top: 0; margin-bottom: 0.5em; }"
-                        "ul ul, ol ol, ul ol, ol ul { margin-bottom: 0; }"
-
-                        "span.symptom:hover { background: #d0d0d0;transition: background 1s; }"
-
-                        "span.tooltip, div.tooltip { display: none; }"
-                        "span.hover:hover span.tooltip, div.hover:hover div.tooltip {"
-                        "	display: inline-block;position: absolute;background-color: #555; "
-                        "   color: #fff;padding: 0.4em;z-index: 9999; "
-                        "   margin-top: 1em;margin-left: 0.5em;margin-right: 1em;margin-bottom: 0; "
-                        "   text-indent: 0;font-style: normal; "
-                        "}"
-                        "span.def-tooltip { min-width: 10em;max-width: 20em; }"
-                        "span.tooltip a, .tooltip a { color: #fff; }"
-
-                        "span.link, span.link a { text-decoration:none;color:inherit; }"
-                        "span.link_hover, span.link_hover a { text-decoration:underline;color:inherit; }"
-
-                        "span.grade2, span.grade2 a { color: #1B83FA; }"
-                        "span.grade3, span.grade3 a { font-weight: bold; color: #aa664e; }"
-                        "span.grade4, span.grade4 a { font-weight: bold; color: #a40fd6; }"
-
-                        "span.remedy1, span.remedy1 a { color: #008000; font-style: italic; }"
-                        "span.remedy2, span.remedy2 a { color: #1b83fa; font-style: italic; }"
-                        "span.remedy3, span.remedy3 a { color: #aa664e; font-style: italic; font-weight: bold; }"
-                        "span.remedy4, span.remedy4 a { color: #a40fd6; font-style: italic; font-weight: bold; }"
-
-                        "span.relation { color: #341973; }"
-                        "span.tendency { font-weight: bold; color: #b30047; }"
-                        "span.clinical { font-style: italic;color: #a300cc; }"
-                        "span.modality { }"
-                        "span.radiating { }"
-                        "span.code, .code { font-family: Courier,monospace;font-size: 85%; }"
-                        ".note { font-size: 80%; }"
-                        ".note p.first { margin-left: 10mm;text-indent: -5mm; }"
-                        ".note p { margin-left: 10mm; }"
-
-                        "span.definition, span.definition-with-highlight { border-bottom: 1.1pt #505050 dotted; }"
-                        "span.definition-with-highlight, span.highlight { background: yellow; }"
-
-                        "table { border-collapse: collapse; }"
-                        "td, th { border: 1px solid #505050;padding: 0.2em; }"
-                        "th { background: #e0e0e0;text-align: center;vertical-align:middle; }"
-                        "td { vertical-align: top; }"
-                        "td.center, th.center { text-align: center; }"
-                        "td.left, th.left { text-align: left; }"
-                        "td.right, th.right { text-align: right; }"
-
-                        ".meta { float: right;	font-size: 80%; border: 1px solid black; top: -5mm; margin-left: 5mm; }"
-                        ".meta img { width: 5cm; }"
-                        ".bigpicture { position:fixed; left: 50%; top: 10%; height: 80%; z-index: 9; display: none; }"
-                        ".bigpicture img { position: relative; left: -50%; height: 100%; }"
-
-                        ".image-center { margin-left:auto; margin-right: auto; }"
-                        ".image-float-left { margin:0;padding:0;float:left; }"
-                        ".image-float-right { margin:0;padding:0;float:right; }"
-                        ".image { margin: 0.5em;margin-top: 1em; }"
-                        ".image .subscript { margin-top: 0.5em; text-align:center; font-size: 80%; font-style: italic; }"
-                        "td .image { margin: 0; }"
-
-                        ".clear { clear:both; }"
-
-                        "span.dash { display:block; }"
-                        "span.dash::before { content: \"-\\00a0\"; }"
-
-                        "span.page-number { color: #ff0000;font-weight: bold;border: 1px solid #ff0000; }"
-                        );
+            return std::string(MMWIKI_CSS);
         }
 
     public:
@@ -1310,7 +1222,7 @@ private:
         std::string pg_ref = mmwiki_mkid("page_ref", static_cast<int>(_pages.size() + 1));
         _pages.append(0, cleanupMM(p), pg_ref);
         std::string ref;
-        ref.append("<a id=\"").append(pg_ref).append("\">&#8203;</a>");
+        ref.append("<span class=\"anchor\" id=\"").append(pg_ref).append("\"></span>");
         return ref;
     }
 
@@ -1382,7 +1294,7 @@ private:
         std::string cell_class;
 
         if (parts.size() > 0) align = mmwiki_trim(mmwiki_toLower(parts[0]));
-        if (parts.size() > 1) cell_class = mmwiki_trim(parts[1]);
+        if (parts.size() > 1) cell_class = mmwiki_trim(mmwiki_toLower(parts[1]));
 
         if (align == "r") { align = "right"; }
         else if (align == "c") { align = "center"; }
@@ -1418,10 +1330,10 @@ private:
             html_class.append(" class=\"").append(cl).append(dash).append("\" ");
         }
         if (toc_ref != "") {
-            std::string a;a.append(" id=\"").append(toc_ref).append("\"");toc_ref = a;
+            std::string a;a.append("<span class=\"anchor\" id=\"").append(toc_ref).append("\">").append("</span>");toc_ref = a;
         }
         _html.append("<").append(h).append(html_class).
-                append(toc_ref).append(" >").
+                append(" >").append(toc_ref).
             append(processSeq(l)).
             append("</").append(h).append(">");
         startDiv(level, h);
@@ -1445,10 +1357,12 @@ private:
         startDiv(level, d);
         std::string toc_ref = "";
         if (toc >= 0) { toc_ref=addToc(toc, r); }
-        if (toc_ref != "") { std::string a;a.append(" id=\"").append(toc_ref).append("\" ");toc_ref=a; }
+        if (toc_ref != "") {
+            std::string a;a.append("<span class=\"anchor\" id=\"").append(toc_ref).append("\" >").append("</span>");toc_ref=a;
+        }
 
         std::string start;
-        start.append("<span class=\"").append(d).append("\"").append(toc_ref).append(">").
+        start.append("<span class=\"").append(d).append("\"").append(">").append(toc_ref).
                 append(processSeq(rubr)).
                 append("</span>");
         startSeq("", start);
@@ -1581,7 +1495,6 @@ private:
         s = std::regex_replace(s, re_cleanup_sym_open, "");
         s = std::regex_replace(s, re_cleanup_close, "");
 
-
         std::string ns;
         applyRe(re_html_implement, s, [&ns](std::smatch &m, int) -> void {
             ns.append(m.prefix());
@@ -1600,7 +1513,7 @@ private:
             ns.append(remain);
         });
 
-        return s;
+        return ns;
     }
 
     bool applyRe(const std::regex &re, std::string s,
@@ -1614,7 +1527,7 @@ private:
             f(match, re_offset);
             s = match.suffix();
 
-            re_offset += match.position() + match.length();
+            re_offset += static_cast<int>(match.position() + match.length());
             applied = true;
         }
         f_remains(s, re_offset);
@@ -1706,7 +1619,7 @@ private:
             case Token::REMEDY2: content = mkRemedy(2, content);content_made = true; break;
             case Token::REMEDY3: content = mkRemedy(3, content);content_made = true; break;
             case Token::REMEDY4: content = mkRemedy(4, content);content_made = true; break;
-            case Token::ANCHOR: o = "<span id=\"";o.append(mkAnchor(content));o.append("\" >");content = "";break;
+            case Token::ANCHOR: o = "<span class=\"anchor\" id=\"";o.append(mkAnchor(content));o.append("\" >");content = "";break;
             case Token::LINK: return mkLink(t);
             case Token::RADIATES: o = "<span class=\"radiating\">@!@#187@%@@!@nbsp@%@";break;
             case Token::WORSE: o = "<span class=\"modality\">@!@lt@%@@!@nbsp@%@";break;
@@ -1867,7 +1780,7 @@ private:
 
     void insertToken(Token &t, Token &ins)
     {
-        if (t.contains(ins)) {
+        /*if (t.contains(ins)) {
             std::vector<Token> &v = t.subTokens();
 
             auto in_ins = std::equal_range(v.begin(), v.end(), ins);
@@ -1889,7 +1802,50 @@ private:
             } else {
                 vv.insert(findIt, ins);
             }
-        }
+        }*/
+		if (t.contains(ins)) {
+			std::vector<Token> &v = t.subTokens();
+			{
+				std::vector<Token> vv;
+                size_t i, N;
+				for(i = 0, N = v.size(); i < N; i++) {
+					Token &tt = v[i];
+					if (ins.equal(tt)) {
+						vv.push_back(tt);
+					} else if (ins.contains(tt)) {
+						insertToken(ins, tt);
+					} else {
+						vv.push_back(tt);
+					}
+				}
+				t.setSubTokens(vv);
+			}
+			
+			{
+				v = t.subTokens();
+				std::vector<Token> vv;
+				bool inserted = false;
+                size_t i, N;
+				for(i = 0, N = v.size(); i < N; i++) {
+					Token &tt = v[i];
+					if (tt.equal(ins)) {
+						vv.push_back(tt);
+						inserted = true;
+					} else if (tt.contains(ins)) {
+						insertToken(tt, ins);
+						vv.push_back(tt);
+						inserted = true;
+					} else if (tt.end() <= ins.start()) {
+						vv.push_back(tt);
+					} else { // tt.end() > ins.start()
+						if (!inserted) { inserted = true; vv.push_back(ins); }
+						vv.push_back(tt);
+					}
+				}
+				if (!inserted) { vv.push_back(ins); }
+				t.setSubTokens(vv);
+			}
+		}
     }
 
     void cleanupTokenTree(Token &t, std::string &original)
@@ -1909,7 +1865,9 @@ private:
                     Token nt(Token::NONE);
                     nt.setStart(last_end);
                     nt.setEnd(start);
-                    nt.setContent(original.substr(static_cast<size_t>(nt.start()), static_cast<size_t>(nt.length())));
+                    nt.setContent(original.substr(static_cast<size_t>(nt.start()), 
+								  static_cast<size_t>(nt.length()))
+								  );
                     nv.push_back(nt);
                 }
                 last_end = tt.end();
@@ -1921,7 +1879,9 @@ private:
                 Token nt(Token::NONE);
                 nt.setStart(last_end);
                 nt.setEnd(t.end());
-                nt.setContent(original.substr(static_cast<size_t>(nt.start()), static_cast<size_t>(nt.length())));
+                nt.setContent(original.substr(static_cast<size_t>(nt.start()), 
+							  static_cast<size_t>(nt.length()))
+							  );
                 nv.push_back(nt);
             }
 
