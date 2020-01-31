@@ -5,8 +5,13 @@
 ###############################################
 
 global $MMWIKI_PREFIX;
-$MMWIKI_PREFIX = "/data/www/mmwiki";
-#$MMWIKI_PREFIX = "c:/xampp/htdocs/mmwiki";
+
+$server = $_SERVER['SERVER_NAME'];
+if ($server == "localhost") {
+	$MMWIKI_PREFIX = "c:/xampp/htdocs/mmwiki";
+} else {
+	$MMWIKI_PREFIX = "/data/www/mmwiki";
+}
 $MMWIKI_HREF_PREFIX = "";
 
 ###############################################

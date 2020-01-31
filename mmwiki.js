@@ -1307,7 +1307,7 @@ class MMWiki
           else if (cmd == "+") type = MMWIKI_TOK_BETTER;
 
           var tok = new MMWiki_Token(type);
-          var c_start = m.index + m[1].length;
+          var c_start = m.index + m[1].length + 1;
 
           if (has_modifier) {
             var t_modifier = new MMWiki_Token(MMWIKI_TOK_MODIFIER);
@@ -1384,7 +1384,7 @@ class MMWiki
           var tok = new MMWiki_Token(type);
           tok.setContent(content);
           tok.setModifier(src);
-          var c_start = m.index + m[1].length + 1 + m[2].length;
+          var c_start = m.index + m[1].length + m[2].length + 1;
           var c_end = c_start + m[3].length;
           tok.setStart(offset + c_start);
           tok.setEnd(offset + c_end);
@@ -1454,7 +1454,7 @@ class MMWiki
             inserted = true;
           } else if (tt.end() <= ins.start()) {
             vv.push(tt);
-          } else { // ins.end() < tt.start()
+          } else { // tt.end() > ins.start()
             if (!inserted) { inserted = true; vv.push(ins); }
             vv.push(tt);
           }
@@ -1477,6 +1477,7 @@ class MMWiki
         for(i = 0; i < v.length; i++) {
           var tt = v[i];
           var start = tt.start();
+		  
           if (start > last_end) {
             var nt = new MMWiki_Token(MMWIKI_TOK_NONE);
             nt.setStart(last_end);
@@ -1485,6 +1486,7 @@ class MMWiki
             nv.push(nt);
           }
           last_end = tt.end();
+		  
           nv.push(tt);
         }
 
