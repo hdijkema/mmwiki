@@ -89,7 +89,7 @@
 	"" \
 	" .clear { clear:both; }" \
 	"" \
-	" span.dash { display:block; }" \
+	" span.dash { display:block;padding-left: 1em; }" \
 	" span.dash::before { content: \"-\\00a0\"; }" \
 	"" \
 	" span.page-number { color: #ff0000;font-weight: bold;border: 1px solid #ff0000; }" \
