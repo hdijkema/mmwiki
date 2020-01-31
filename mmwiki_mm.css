@@ -110,6 +110,8 @@ td img, th img, .logo img {
 
 span.anchor {
     top: -3em;
+    position: relative;
+	display: block;
 }
 
 
