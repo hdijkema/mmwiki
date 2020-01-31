@@ -287,16 +287,16 @@ S{Also used as a local anaesthetic, antispasmodic, and to dry up secretions, mil
 S{Hypodermically 1-80 gr night sweats in phthisis.}
 
 :rubric=dose
-S{R[Atro-s]pia Sulph, 1-120 to 1-60 grain.}
+R{R[Atro-s]pia R[Sulph], 1-120 to 1-60 grain.}
 
 :rubric2=Antidotes to Belladonna:
-S{R[Camph]; R[Coff]; R[Op]; R[Acon].}
+R{R[Camph]; R[Coff]; R[Op]; R[Acon].}
 
 :rubric2=Complementary
-S{R[Calc]. R[Bell] (contains lime). Especially in semi-chronic and constitutional diseases.}
+R{R[Calc]. R[Bell] (contains lime). Especially in semi-chronic and constitutional diseases.}
 
 :rubric2=Incompatible
-R[Acet-ac].}
+R{R[Acet-ac].}
 
 :rubric=dose
 First to thirtieth potency and higher. Must be repeated frequently in acute diseases.

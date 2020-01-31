@@ -5,7 +5,7 @@
 :source=T,,,<center><b>,</b></center>
 
 :begin[en]
-
+ 
 :head=Information
 
 * L[wiki://zc4/index|ZC4 Manual]
@@ -27,7 +27,5 @@
 
 * L[wiki://mm_boericke/index|Boericke - Materia Medica]
 * L[wiki://mm_clarke/index|J.H. Clarke - A dictionary of Practical Materia Medica]
-
-* L[wiki://test|test]
 
 :end

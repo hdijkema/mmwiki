@@ -1,12 +1,12 @@
 <?php
-# vim: tabstop=3 softtabstop=0 noexpandtab shiftwidth=3
+# vim: ts=4 sw=4 sts=4 noet :
 require_once("config.php");
 error_log(print_r($_GET, true));
 ?>
 <!DOCTYPE html>
 <html>
   <head>
-	<meta charset="utf-8"></meta>
+	<meta charset="utf-8">
 	<link rel="stylesheet" href="mmwiki.css"></link>
 	<link rel="stylesheet" href="_style.css"></link>
 	<link rel="stylesheet" href="mmwiki_mm.css"></link>

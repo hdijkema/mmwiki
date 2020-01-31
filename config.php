@@ -1,5 +1,5 @@
 <?php
-
+# vim: ts=4 sw=4 sts=4 noet :
 ###############################################
 # Global prefix
 ###############################################
@@ -65,12 +65,12 @@ function convertRemedies()
     foreach($remedies as $remedy) {
         $abbrev = $remedy->a;
         $latin_name = $remedy->n;
-        fputs($fh, "$comma '$abbrev': '$latin_name'");
+        fputs($fh, "$comma '$abbrev': '$latin_name'\n");
         $comma = ",";
         if (isset($remedy->aka)) {
         $aka = $remedy->aka;
             foreach($aka as $aka_abbrev) {
-                fputs($fh, "$comma '$aka_abbrev': '$latin_name'");
+                fputs($fh, "$comma '$aka_abbrev': '$latin_name'\n");
             }
         }
     }
@@ -112,12 +112,19 @@ function convertImages($href_prefix)
                 $lic = escape($attr->l);
                 $licU = escape($attr->lu);
                 $srcU = escape($attr->su);
-                $imgSrc = escape("$href_prefix/images/$img");
-                $code .= "$comma new MMWiki_ImageSrc('$auth', ".
-                               "'$authU', 'Source', '$srcU', '$lic', '$licU', '$imgSrc', '$lc_abbrev'".
-                               ")";
-                $comma = ",";
-            }
+            } else {
+			    $auth = "unknown";
+				$authU = "";
+				$lic = "unknown";
+				$licU = "";
+				$srcU = "";
+			}
+
+            $imgSrc = escape("$href_prefix/images/$img");
+            $code .= "$comma new MMWiki_ImageSrc('$auth', ".
+                           "'$authU', 'Source', '$srcU', '$lic', '$licU', '$imgSrc', '$lc_abbrev'".
+                           ")";
+            $comma = ",";
         }
         if ($code != "") {
             fputs($fh, "$icomma '$lc_abbrev': new Array($code)\n");

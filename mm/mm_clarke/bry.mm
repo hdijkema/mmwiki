@@ -2,8 +2,8 @@
 :edition=July 4, 1900
 :author=J.H. Clarke
 :editor=Hans Dijkema
-:source=T,,<center><b>,</b></center>
-:abbrev=Bry
+:source=T,,,<center><b>,</b></center>
+:abbrev=bry
 :latin-name=Bryonia alba
 
 :begin[en]

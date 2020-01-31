@@ -19,6 +19,13 @@ class MMWiki_Line
   {
     this.setLine(l);
     this._value = "";
+
+    var s = "";
+    if (typeof s.trimStart  === "function") { 
+		this.triml = function(s) { return s.trimStart(); }
+    } else {
+		this.triml = function(s) { return s.trimLeft(); }
+	}
   }
 
   isKeyVal(key)
@@ -31,7 +38,7 @@ class MMWiki_Line
          this._value = "";
          return true;
        } else if (this._line_ci[idx] == '=') {
-         var s = this._line.trimStart();
+         var s = this.triml(this._line);
          this._value = s.substr(idx + 1);
          return true;
        }
@@ -444,7 +451,7 @@ class MMWiki
 		this.re_symptom_grade = /([234])\[([^\[\]]*)\]/;
 		this.re_anchor = /N\[[^\]]+\]/;
 
-		this.re_section = /^\s*:begin\[([a-z, ]+)\]\s*$/mg;
+		this.re_section = /^\s*:begin\[([a-z, ]+)\]\s*$/m;
 		this.re_end = /^\s*:end\s*$/m;
 
 		this.re_bullits = /^([*12]+)\s/;
@@ -467,6 +474,21 @@ class MMWiki
 		this._img_provider = new MMWiki_ImageProvider();
 
 		this._toc = new MMWiki_Toc();
+
+		this.matchAll = function(s, re) {
+			var r = new Array();
+			var m = s.match(re);
+			var offset = 0;
+			while(m) {
+				m.index += offset;
+				r.push(m);
+				var idx = m.index + m[0].length;
+				s = s.substr(idx);
+				m = s.match(re);
+				offset = idx;
+			}
+			return r;
+		}
     }
 	
 	header() { return this._header; }
@@ -1532,13 +1554,15 @@ class MMWiki
 
     extractContents(lang)
     {
-      var matches = this._mmwiki.matchAll(this.re_section);
+	  var matches = this.matchAll(this._mmwiki, this.re_section);
 
       var first_language = -1;
       var en_language = -1;
       var has_language = -1;
 
-      for(const match of matches) {
+	  var i_m;
+      for(i_m = 0; i_m < matches.length; i_m++) {
+		  var match = matches[i_m];
           var l = match[1];
           var langs = l.split(',');
           var languages = new Array();

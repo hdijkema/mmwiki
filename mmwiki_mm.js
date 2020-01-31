@@ -138,6 +138,7 @@ class MMWikiMM
 			var lp = this._link_prov;
 			var author = hdr.author().trim();
 			if (author != "") { author = " (" + author + ")"; }
+			document.title = hdr.book() + author;
 			var h_html = '<div class="mmwiki_hdr">' + 
 						 '<div class="left">' + 
 							lp.mkLinkHRef("wiki://index", hdr.book() + author) + 
