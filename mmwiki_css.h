@@ -11,7 +11,6 @@
 	"  margin-left: 5%;" \
 	"  margin-right: 5%;" \
 	"  color: black;" \
-	"  font-family: Arial, sans;" \
 	" }" \
 	"" \
 	" h1, h2, h3, h4, h5 { font-family: Arial,sans-serif; color: #2d8659;margin-bottom: 1em;margin-top:1em; }" \
@@ -94,6 +93,6 @@
 	" span.dash::before { content: \"-\\00a0\"; }" \
 	"" \
 	" span.page-number { color: #ff0000;font-weight: bold;border: 1px solid #ff0000; }" \
-	" span.anchor { visibility: hidden; }" 
+	" span.anchor { visibility: hidden;display:block;position:relative; }" 
 
 #endif
