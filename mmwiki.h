@@ -188,7 +188,7 @@ public:
                       GRADE2 = '2' + 200, GRADE3 = '3' + 200, GRADE4 = '4' + 200,
                       MODALITY = 'M' + 200, CLASSIFICATION = 'C' + 200, TENDENCY = 'T' + 200,
                       REMEDY1 = 'R' + 300, REMEDY2 = 'R' + 301, REMEDY3 = 'R' + 302, REMEDY4 = 'R'+ 303,
-                      DEFINITION = 't' + 200,
+                      DEFINITION = 't' + 200, INLINE_IMAGE = 'i' + 200,
                       RADIATES = '^' + 200, BETTER = '+' + 200, WORSE = '-' + 200,
                       BOLD = 'B' + 200, ITALIC = 'I' + 200,
                       PAGE = 'P' + 200, CODE = 'Q' + 200, HIGHLIGHT = 'H' + 200,
@@ -360,6 +360,22 @@ public:
         virtual ~ImageProvider() {}
     public:
         ImageProvider &operator = (const ImageProvider &other) = default;
+    };
+
+    class IncludeProvider
+    {
+    public:
+        virtual std::string getPage(const std::string &pagename)
+        {
+            MMWIKI_UNUSED(pagename);
+            return "";
+        }
+    public:
+        IncludeProvider() {}
+        IncludeProvider(const IncludeProvider &other) = default;
+        virtual ~IncludeProvider() {}
+    public:
+        IncludeProvider &operator = (const IncludeProvider &other)= default;
     };
 
     class LinkProvider {
@@ -613,11 +629,14 @@ public:
     };
 
 private:
+    bool             _owns_providers;
+
     CssProvider     *_css_provider;
     ImageProvider   *_image_provider;
     MetaProvider    *_meta_provider;
     RemedyProvider  *_remedy_provider;
     LinkProvider    *_link_provider;
+    IncludeProvider *_incl_provider;
 
     HighlightWords  _highlight_words;
     Header          _header;
@@ -638,6 +657,7 @@ private:
     std::vector<Symptom>                        _empty_symptoms;
 
     // State
+    std::string                 _req_language;
     bool                        _one_per_line;
     bool                        _no_dashes;
     std::vector<std::string>    _divs;
@@ -672,10 +692,13 @@ private:
 public:
     MMWiki()
     {
+        _owns_providers = true;
+
         _image_provider = new ImageProvider();
         _css_provider = new CssProvider();
         _remedy_provider = new RemedyProvider();
         _link_provider = new LinkProvider();
+        _incl_provider = new IncludeProvider();
 
         _meta_provider = new MetaProvider();
         _meta_provider->setMMWiki(this);
@@ -683,16 +706,18 @@ public:
         re_prepare_modalities = std::regex("[<>]\\[");
         re_html_prepare = std::regex("([<>&'])");
         re_symptom = std::regex("([CSGZR])([A-Z]*)[{]([^}{]*)[}]");
-        re_markup = std::regex("([234PQHNMITBRCLt^!+-]|R[234])\\[([^\\]\\[]*)\\]");
+        re_markup = std::regex("([234PQHNMITBRCLti^!+-]|R[234])\\[([^\\]\\[]*)\\]");
         re_modalities = std::regex("([<>])\\[([^\\]\\[]*)\\]");
         re_literals = std::regex("\\\\[:{}\\[\\]]|\\[BR\\]");
         re_html_implement = std::regex("[@][!][@]([^@]+)[@][%][@]");
         re_symptom_grade = std::regex("([234])\\[([^\\]\\[]*)\\]");
-        re_section = std::regex("^\\s*:begin\\[([a-z,]+)\\]\\s*$");
-        re_end = std::regex("^\\s*:end\\s*$");
+        //re_section = std::regex("^\\s*:begin\\[([a-z,]+)\\]\\s*$");
+        re_section = std::regex("\\s*:begin\\[([a-z,]+)\\]\\s*\n");       // cannot use ^ and $. on OS X std::regex does no multiline
+        //re_end = std::regex("^\\s*:end\\s*$");
+        re_end = std::regex("\\s*:end\\s*\n");                            // cannot use ^ and $. on OS X std::regex does no multiline
         re_anchor = std::regex("N\\[[^\\]]+\\]");
         re_cleanup_sym_open = std::regex("([CSGZRP])([A-Z]*)[{]");
-        re_cleanup_open = std::regex("([234PQHNMITBRCLt^!<>]|R[234])\\[([^|]+[|]){0,1}");
+        re_cleanup_open = std::regex("([234PQHNMITBRCLti^!<>]|R[234])\\[([^|]+[|]){0,1}");
         re_cleanup_close = std::regex("(\\]|[}])");
         re_bullits = std::regex("^([*12]+)\\s");
         re_width = std::regex("([0-9.]+)(%|em|pt|mm|cm){0,1}");
@@ -702,11 +727,13 @@ public:
     MMWiki(const MMWiki &other) = default;
     ~MMWiki()
     {
-        delete _meta_provider;
-        delete _image_provider;
-        delete _css_provider;
-        delete _link_provider;
-        delete _remedy_provider;
+        if (_owns_providers) {
+            delete _meta_provider;
+            delete _image_provider;
+            delete _css_provider;
+            delete _link_provider;
+            delete _remedy_provider;
+        }
     }
 
 public:
@@ -718,6 +745,7 @@ public:
     void setMetaProvider(MetaProvider *provider) { delete _meta_provider; _meta_provider = provider;_meta_provider->setMMWiki(this); }
     void setLinkProvider(LinkProvider *l) { delete _link_provider; _link_provider = l; }
     void setRemedyProvider(RemedyProvider *r) { delete _remedy_provider; _remedy_provider = r; }
+    void setIncludeProvider(IncludeProvider *i) { delete _incl_provider; _incl_provider = i; }
 
     void setHighlightWords(const HighlightWords &words) { _highlight_words = words; }
 
@@ -726,6 +754,7 @@ public:
     MetaProvider *metaProvider() { return _meta_provider; }
     RemedyProvider *remedyProvider() { return _remedy_provider; }
     LinkProvider *linkProvider() { return _link_provider; }
+    IncludeProvider *includeProvider() { return _incl_provider; }
 
     HighlightWords &highlightWords() { return _highlight_words; }
     Header &header() { return _header; }
@@ -963,6 +992,7 @@ public:
         _toc.clear();
         _pages.clear();
 
+        _req_language = language;
         _one_per_line = one_per_line;
         _no_dashes = false;
 
@@ -1006,7 +1036,9 @@ public:
             int level;
             std::string bullit;
 
-            if (line == ":no-dash-begin") {
+            if (line.isKeyVal(":include")) {
+                addInclude(line.value());
+            } else if (line == ":no-dash-begin") {
                 _no_dashes = true;
             } else if (line == ":no-dash-end") {
                 _no_dashes = false;
@@ -1320,6 +1352,33 @@ private:
         }
     }
 
+    void addInclude(const std::string &incl)
+    {
+        std::vector<std::string> l = mmwiki_split(incl, ',');
+        std::string incl_page = "";
+        std::string div_class = "";
+        if (l.size() > 0) incl_page = mmwiki_trim(l[0]);
+        if (l.size() > 1) div_class = mmwiki_trim(l[1]);
+
+        if (div_class != "") _html.append("<div class=\"").append(div_class).append("\">");
+        if (incl_page != "") {
+            MMWiki *m = new MMWiki();
+            m->_owns_providers = false;
+            m->setImageProvider(imageProvider());
+            m->setCssProvider(cssProvider());
+            m->setRemedyProvider(remedyProvider());
+            m->setLinkProvider(linkProvider());
+            m->setIncludeProvider(includeProvider());
+            m->setMetaProvider(metaProvider());
+            metaProvider()->setMMWiki(this);
+
+            _html.append(m->toHtml(incl_page, _one_per_line, _req_language));
+
+            delete m;
+        }
+        if (div_class != "") _html.append("</div>");
+    }
+
     void addHead(int toc, int level, const std::string &h, const std::string &l, const std::string &cl = "")
     {
         endDiv(level, h);
@@ -1615,6 +1674,13 @@ private:
             case Token::PAGE: cl = "page-number";c.append(addPage(content));break;
             case Token::CODE: cl = "code";break;
             case Token::TENDENCY: cl = "tendency";break;
+            case Token::INLINE_IMAGE: {
+                   cl = "inline-image";
+                   std::string c = "<img src=\"";
+                   c.append(imageProvider()->getImageSrc(content)).append("\" />");
+                   content = c;
+            }
+            break;
             case Token::DEFINITION: return mkDefinition(t);
             case Token::REMEDY1: content = mkRemedy(1, content);content_made = true; break;
             case Token::REMEDY2: content = mkRemedy(2, content);content_made = true; break;
@@ -1931,6 +1997,7 @@ private:
                     case 'P': type = Token::PAGE;break;
                     case 'Q': type = Token::CODE;break;
                     case 'T': type = Token::TENDENCY;break;
+                    case 'i': type = Token::INLINE_IMAGE;break;
                     case 't': {
                         type = Token::DEFINITION;
                         std::size_t idx = content.find("|");
