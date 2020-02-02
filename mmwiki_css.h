@@ -96,6 +96,6 @@
 	"" \
 	" span.anchor { z-index:20;visibility:hidden;display:inline;position:relative; }" \
 	"" \
-	" span.inline-image img { height: 1.25em;box-shadow: none;vertical-align:-0.25em; }" 
+	" span.inline-image img { height: 1.10em;box-shadow: none;vertical-align:-0.20em; }" 
 
 #endif
