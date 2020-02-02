@@ -34,6 +34,7 @@ error_log(print_r($_GET, true));
 			<button id="login_btn" type="button" style="display:none;float:right;" onclick="document.mmwiki_login();">Login</button>
 			<button id="logout_btn" type="button" style="display:none;float:right;" onclick="document.mmwiki_logout();">Logout</button>
 			<button id="open_btn" type="button" style="display:none;float:right;" onclick="document.mmwiki_open_editor();">Open Editor</button>
+			<div id="login-ping">-</div>
 	  </div>
 	  <div id="editor"><!-- This is where the editor goes--></div>
   </div>
@@ -176,11 +177,27 @@ error_log(print_r($_GET, true));
 			var editor;
 
 			var logged_in = mmwikiCookie('logged-in');
+			var ping_timeout = 0;
 			
 			document.mmwiki_login = function() {
 				var form = document.getElementById('login-form');
 				form.style.display = 'block';
 				document.getElementById('login-account').focus();
+			};
+
+			var ping_nr = 0;
+			document.mmwiki_ping = function () {
+				mmwikiPing(
+					function() { 
+						ping_nr += 1;
+						document.getElementById('login-ping').innerHTML = ping_nr.toString();
+					 }, 
+					function() { 
+						logged_in = false; document.mmwiki_main(); 
+						window.clearInterval(ping_timeout);
+						document.getElementById('login-ping').innerHTML = "!";
+					}
+				);
 			};
 			
 			document.mmwiki_logout = function() {
@@ -188,6 +205,8 @@ error_log(print_r($_GET, true));
 					function() { 
 						logged_in = false;
 						document.mmwiki_main();
+						window.clearInterval(ping_timeout);
+						document.getElementById('login-ping').innerHTML = "-";
 					}, 
 					function() {
 						alert("Could not logout");
@@ -197,6 +216,7 @@ error_log(print_r($_GET, true));
 			
 			document.mmwiki_main = function() {
 				if (logged_in == "yes") {
+					ping_timeout = window.setInterval(document.mmwiki_ping, 30000);
 					var language = mmwikiLanguage();
 					lang_code.onchange = function() { 
 						mmwikiSetLanguage(lang_code.value); 
@@ -372,6 +392,7 @@ error_log(print_r($_GET, true));
 								document.mmwiki_cancel_login();
 								logged_in = "yes";
 								document.mmwiki_main();
+								ping_timeout = window.setInterval(document.mmwiki_ping, 30000);
 							}, function() {
 								document.getElementById('login-msg').innerHTML = 
 									'<span class="error">Could not login to MMWiki, try again</span>';

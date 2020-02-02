@@ -313,6 +313,21 @@ function mmwikiLogin(account, passwd, f_ok, f_error)
 	xhr.send(data);
 }
 
+function mmwikiPing(f_ok, f_error)
+{
+  var xhr = new XMLHttpRequest();
+   var url = "ping.php";
+   xhr.open("GET", url, true);
+   xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+         f_ok();
+      } else if (xhr.readyState ===4) {
+         f_error();
+      }
+   }
+   xhr.send();
+}
+
 function mmwikiLogout(f_ok, f_error) 
 {
 	var xhr = new XMLHttpRequest();
