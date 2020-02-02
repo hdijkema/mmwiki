@@ -85,6 +85,7 @@ error_log(print_r($_GET, true));
 			document.getElementById('mmwiki').innerHTML = contents;
 			document.getElementById('mmwiki_hdr').innerHTML = m.headerHtml();
 			document.getElementById('mmwiki_toc').innerHTML = toc;
+			m.addIncludes();
 		}
 		var txt = <?php echo "'$contents'"; ?>;
 		document.mmwiki_updater(txt);

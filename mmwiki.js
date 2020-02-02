@@ -297,6 +297,15 @@ class MMWiki_ImageSrc
 	}
 }
 
+class MMWiki_IncludeProvider
+{
+	constructor() { }
+
+	getPage(pagename, f_setter, f_error) {
+		return false;
+	}
+}
+
 class MMWiki_ImageProvider
 {
 	constructor() { }
@@ -472,6 +481,8 @@ class MMWiki
 		this._meta_provider = new MMWiki_MetaProvider();
 		this._meta_provider.setMMWiki(this);
 		this._img_provider = new MMWiki_ImageProvider();
+		this._include_provider = new MMWiki_IncludeProvider();
+		this._incl_prefix = "";
 
 		this._toc = new MMWiki_Toc();
 
@@ -504,11 +515,16 @@ class MMWiki
 
     remedyProvider() { return this._remedy_provider; }
     setRemedyProvider(r) { this._remedy_provider = r; }
+
+	includeProvider() { return this._include_provider; }
+	setIncludeProvider(i) { this._include_provider = i; }
 	
 	minGrade() { return this._min_grade; }
 	setMinGrade(g) { this._min_grade = g; }
 	
 	toc() { return this._toc; }
+
+	setInclPrefix(p) { this._incl_prefix = p; }
 	
 
     toHtml(mmwiki, one_per_line = false, language = 'en')
@@ -521,8 +537,12 @@ class MMWiki
         this._tables_cell = new MMWiki_Stack();
         this._tables_cells = new MMWiki_Stack();
 
+		this._req_language = language;
         this._one_per_line = one_per_line;
         this._no_dashes = false;
+
+		this._includes = new Array();
+		this._incl_id = 0;
 
         this._seq = "";
         this._seq_class = "";
@@ -563,7 +583,9 @@ class MMWiki
           var line = new MMWiki_Line(lines[i]);
           var bullit_state = { level: 0, bullit: "*" };
 
-          if (line.isKey(":no-dash-begin")) {
+		  if (line.isKeyVal(":include")) {
+			this.addInclude(line.value());
+		  } else if (line.isKey(":no-dash-begin")) {
             this._no_dashes = true;
           } else if (line.isKey(":no-dash-end")) {
             this._no_dashes = false;
@@ -627,6 +649,14 @@ class MMWiki
 
         return this._html;
     }
+
+	addIncludes()
+	{
+		var i;
+		for(i = 0; i < this._includes.length; i++) {
+			this._includes[i]();
+		}
+	}
 
     setHighlightWords(h)
     {
@@ -836,6 +866,32 @@ class MMWiki
       }
       return false;
     }
+
+	addInclude(line)
+	{
+		var cmds = line.split(',');
+		var include_page = "";
+		var div_class = "";
+		if (cmds.length > 0) { include_page = cmds[0].trim(); }
+		if (cmds.length > 1) { div_class = cmds[1].trim(); }
+		if (include_page != "") {
+			var id = this._incl_id;
+			id += 1;
+			this._incl_id = id;
+			var div_id = "incl_" + this._incl_prefix + id.toString();
+			this._html += "<div id=\"" + div_id + "\"></div>"; 
+			var me = this;
+			this._includes.push(function() {
+				me.includeProvider().getPage(include_page, function(txt) {
+					var html = me.toHtml(txt, me._one_per_line, me._req_language);
+					if (div_class != "") html = "<div class=\"" + div_class + "\">" + html;
+					if (div_class != "") html += "</div>";
+					document.getElementById(div_id).innerHTML = html;A
+				}, function() { console.log("Error getting page " + include_page); }
+				);
+			});
+		}
+	}
 
     addHead(toc, level, h, l, cl = "")
     {

@@ -114,6 +114,31 @@ class MMImageProvider
 	}
 }
 
+class MMIncludeProvider
+{
+	constructor()
+	{
+		this._context = "";
+	}
+
+	setContext(c) { this._context = c; }
+
+	getPage(include_page, setter, f_error)
+	{
+		var xhr = new XMLHttpRequest();
+		var url = "get_page.php?context=" + this._context + "&page=" + include_page;
+		xhr.open("GET", url, true);
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState === 4 && xhr.status === 200) {
+				setter(xhr.responseText);
+			} else if (xhr.readyState ===4) {
+				f_error();
+			}
+		}
+		xhr.send();
+	}
+}
+
 class MMWikiMM 
 {
 		constructor(context)
@@ -122,12 +147,15 @@ class MMWikiMM
 			this._rem_prov = new MMRemedyProvider();
 			this._link_prov = new MMLinkProvider();
 			this._img_prov = new MMImageProvider();
+			this._incl_prov = new MMIncludeProvider();
 			this._rem_prov.setContext(context);
 			this._link_prov.setContext(context);
 			this._img_prov.setContext(context);
+			this._incl_prov.setContext(context);
 			this._mmwiki.setLinkProvider(this._link_prov);
 			this._mmwiki.setRemedyProvider(this._rem_prov);
 			this._mmwiki.setImageProvider(this._img_prov);
+			this._mmwiki.setIncludeProvider(this._incl_prov);
 			this._context = context;
 			this._abbrev = "";
 		}
@@ -187,6 +215,11 @@ class MMWikiMM
 			var d_html = h1_html + h_meta + html;
 			
 			return d_html;
+		}
+
+		addIncludes() 
+		{
+			this._mmwiki.addIncludes();
 		}
 		
 		tocHtml() 
