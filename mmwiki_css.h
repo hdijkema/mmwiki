@@ -94,6 +94,8 @@
 	"" \
 	" span.page-number { color: #ff0000;font-weight: bold;border: 1px solid #ff0000; }" \
 	"" \
-	" span.anchor { z-index:20;visibility:hidden;display:inline;position:relative; }" 
+	" span.anchor { z-index:20;visibility:hidden;display:inline;position:relative; }" \
+	"" \
+	" span.inline-image img { height: 1.25em;box-shadow: none;vertical-align:-0.25em; }" 
 
 #endif

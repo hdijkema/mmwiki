@@ -58,9 +58,12 @@ body {
 .toc {
 	position: fixed;
 	margin-left: -15%;
-	/*margin-top: 1em;*/
 	width: 14%;
-	font-size: 90%;
+	font-size: 80%;
+}
+
+.toc h3 {
+	font-size: 125%;
 }
 
 .toc ul {
@@ -68,8 +71,20 @@ body {
    padding-left: 0;
 }
 
+.toc ul li {
+   padding-bottom: 0.5em;
+}
+
 .toc ul ul {
    padding-left: 1em;
+}
+
+.toc ul ul li {
+   padding-bottom: 0.1em;
+}
+
+.toc ul ul ul {
+	padding-left: 1em;
 }
 
 

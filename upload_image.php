@@ -27,7 +27,8 @@ if (loggedIn()) {
 		$file = $dir . "/" . $name;
 		
 		$uploaded = $_FILES['image'];
-		$check = getimagesize($uploaded['tmp_name']);
+		$name = $uploaded['tmp_name'];
+		$check = filesize($uploaded['tmp_name']);
 		if (!$check) {
 			error_log("no getimagesize = $check"); 
 			http_response_code(400);

@@ -151,7 +151,8 @@ const MMWIKI_TOK_NOOP = -2,
       MMWIKI_TOK_HIGHLIGHT = 218,
       MMWIKI_TOK_LINK = 219,
       MMWIKI_TOK_LITERAL = 220,
-      MMWIKI_TOK_ANCHOR = 221;
+      MMWIKI_TOK_ANCHOR = 221,
+	  MMWIKI_TOK_INLINE_IMAGE = 222;
 
 class MMWiki_Token
 {
@@ -455,7 +456,7 @@ class MMWiki
 		this.re_html_implement = /[@][!][@]([^@]+)[@][%][@]/;
 
 		this.re_symptom = /([CSGZR])([A-Z]*)[{]([^}{]*)[}]/;
-		this.re_markup = /([234PQHNMITBRCLt^!+-]|R[234])\[([^\[\]]*)\]/;
+		this.re_markup = /([234PQHNMITBRCLti^!+-]|R[234])\[([^\[\]]*)\]/;
 		this.re_modalities = /([<>])\[([^\[\]]*)\]/;
 		this.re_symptom_grade = /([234])\[([^\[\]]*)\]/;
 		this.re_anchor = /N\[[^\]]+\]/;
@@ -467,7 +468,7 @@ class MMWiki
 		this.re_literals = /\\[:{}\[\]]|\[BR\]/;
 
 		this.re_cleanup_sym_open = /([CSGZR])([A-Z]*)[{]/;
-		this.re_cleanup_open = /([234PQHNMITBRCLt^!+-]|R[234])\[([^|]+[|]){0, 1}/;
+		this.re_cleanup_open = /([234PQHNMITBRCLti^!+-]|R[234])\[([^|]+[|]){0, 1}/;
 		this.re_cleanup_close = /(\]|[}])/;
 
 		this.re_width = /([0-9.]+)(%|em|pt|mm|cm){0,1}/;
@@ -1197,6 +1198,7 @@ class MMWiki
       else if (type == MMWIKI_TOK_PAGE) { cl = "page-number";c += this.addPage(content); }
       else if (type == MMWIKI_TOK_CODE) { cl = "code"; }
       else if (type == MMWIKI_TOK_TENDENCY) { cl = "tendency"; }
+	  else if (type == MMWIKI_TOK_INLINE_IMAGE) { content = "<img src=\"" + this.imageProvider().getImageSrc(content) + "\" />"; cl = "inline-image"; }
       else if (type == MMWIKI_TOK_DEFINITION) { return this.mkDefinition(t); }
       else if (type == MMWIKI_TOK_REMEDY1) { content = this.mkRemedy(1, content); content_made = true; }
       else if (type == MMWIKI_TOK_REMEDY2) { content = this.mkRemedy(2, content); content_made = true; }
@@ -1351,6 +1353,7 @@ class MMWiki
           else if (cmd == "Q") type = MMWIKI_TOK_CODE;
 		  else if (cmd == "N") type = MMWIKI_TOK_ANCHOR;
           else if (cmd == "T") type = MMWIKI_TOK_TENDENCY;
+		  else if (cmd == "i") type = MMWIKI_TOK_INLINE_IMAGE;
           else if (cmd == "t") {
             type = MMWIKI_TOK_DEFINITION;
             var idx = content.indexOf("|");
