@@ -206,11 +206,11 @@ public:
         Token(Tok a) { setType(a); }
 
     public:
-        bool contains(const Token &other) { return other.start() >= start() &&
+        bool contains(const Token &other) const { return other.start() >= start() &&
                                                    other.end() <= end();
                                           }
         bool equal(const Token &b) const { return b.start() == start() && b.end() == end(); }
-        int length() { return end() - start(); }
+        int length() const { return end() - start(); }
     public:
         bool hasA(std::function<bool(const Token &t)> f) const {
             if (f(*this)) { return true; }
@@ -712,9 +712,10 @@ public:
         re_html_implement = std::regex("[@][!][@]([^@]+)[@][%][@]");
         re_symptom_grade = std::regex("([234])\\[([^\\]\\[]*)\\]");
         //re_section = std::regex("^\\s*:begin\\[([a-z,]+)\\]\\s*$");
-        re_section = std::regex("\\s*:begin\\[([a-z,]+)\\]\\s*\n");       // cannot use ^ and $. on OS X std::regex does no multiline
+        re_section = std::regex("\\s*:begin\\[([a-z,]+)\\]\\s*\n");     // cannot use ^ and $. on OS X std::regex does no multiline
         //re_end = std::regex("^\\s*:end\\s*$");
-        re_end = std::regex("\\s*:end\\s*\n");                            // cannot use ^ and $. on OS X std::regex does no multiline
+        re_end = std::regex("\\s*:end\\s*");                            // cannot use ^ and $. on OS X std::regex does no multiline
+																		// however, :end could not be terminated by a '\n'.
         re_anchor = std::regex("N\\[[^\\]]+\\]");
         re_cleanup_sym_open = std::regex("([CSGZRP])([A-Z]*)[{]");
         re_cleanup_open = std::regex("([234PQHNMITBRCLti^!<>]|R[234])\\[([^|]+[|]){0,1}");
