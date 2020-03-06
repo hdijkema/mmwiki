@@ -49,8 +49,8 @@ S{Cataracts (R[Calc]; R[Phos]; R[Sil]).}
 
 :rubric=ears
 S{Hardness of hearing.}
-S{2[Crackling noise.}
-S{Glands around ears painful and swollen].}
+S{2[Crackling noise].}
+S{2[Glands around ears painful and swollen].}
 S{Reverberation on blowing nose.}
 
 :rubric=nose

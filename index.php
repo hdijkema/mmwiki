@@ -10,6 +10,7 @@ error_log(print_r($_GET, true));
 	<link rel="stylesheet" href="mmwiki.css"></link>
 	<link rel="stylesheet" href="_style.css"></link>
 	<link rel="stylesheet" href="mmwiki_mm.css"></link>
+	<link rel="stylesheet" href="custom.css"></link>
 	<link rel="icon" href="favicon.png" sizes="32x32" />
 	<link rel="icon" href="favicon.png" sizes="192x192" />	
 	<script src="mmwiki.js" type="text/javascript" charset="utf-8"></script>
@@ -156,11 +157,14 @@ error_log(print_r($_GET, true));
 		$contents = str_replace("\r", "", $contents);
 		$contents = str_replace("'", "\\'", $contents);
 		$contents = str_replace("<", "&lt;", $contents);
+		if (isset($_GET['login'])) { $login_btn_yes = 1; }
+		else { $login_btn_yes = 0; }
 		?>
 		<script>
 			var context = <?php echo "'$context'"; ?>;
 			var page = <?php echo "'$page'"; ?>;
 			var contents = <?php echo "'$contents'"; ?>;
+			var login_btn_yes = <?php echo $login_btn_yes; ?>;
 			var elem_editor = document.getElementById('editor');
 			var div_editor = document.getElementById('mm_edit'); 
 			var open_btn = document.getElementById('open_btn');
@@ -349,6 +353,9 @@ error_log(print_r($_GET, true));
 					open_btn.style.display = 'none';
 					logout_btn.style.display = 'none';
 					login_btn.style.display = 'inline';
+					if (login_btn_yes != 1) {
+						login_btn.style.display = 'none';
+					}
 					
 					var login_account = document.getElementById('login-account');
 					var login_passwd = document.getElementById('login-passwd');

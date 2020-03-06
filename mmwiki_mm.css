@@ -11,11 +11,32 @@ body {
 	margin-left: 0;
 	margin-right: 0;
 	font-family: Arial, sans-serif;
+	font-size: 16px;
+}
+
+@media screen and (max-device-width: 480px) and (orientation: portrait) {
+  body {
+    font-size: 70px;
+  }
+}
+
+@media screen and (max-device-width: 640px) and (orientation: landscape)  {
+  body {
+    font-size: 18px;
+  }
 }
 
 #mmwiki .wiki-inhoud {
 	margin-left: -20%;
 	width: 19%;
+}
+
+@media screen and (max-device-width: 480px) and (orientation: portrait), 
+   screen and (max-device-width: 640px) and (orientation: landscape)  {
+  #mmwiki .wiki_inhoud {
+     margin-left: 0;
+     width: 100%;
+  }
 }
 
 .mmwiki_hdr {
@@ -31,10 +52,6 @@ body {
 	top: 0;
 }
 
-#mmwiki {
-   margin-top: 4em;
-}
-
 .mmwiki_hdr .left {
 	display: inline;
 	margin-right: auto;
@@ -47,6 +64,64 @@ body {
 	margin-right: 0;
 }
 
+.mmwiki_hdr .left a span.index, .mmwiki_hdr .right a span.home {
+	display: inline;
+}
+
+.mmwiki_hdr .left a span.mobile-index, .mmwiki_hdr .right a span.mobile-home {
+	display: none;
+}
+
+@media screen and (max-device-width: 480px) and (orientation: portrait), 
+   screen and (max-device-width: 640px) and (orientation: landscape)  {
+  .mmwiki_hdr { 
+	position: fixed;
+	padding-top: 1em;
+	margin-bottom: 1em;
+	padding-bottom: 0.5em;
+	border-bottom: 1px solid #404040;
+	background: white;
+	width: 100%;
+	margin-left: 0%;
+	margin-right: 0%;
+	position: fixed;
+	padding-top: 0;
+	display:block;
+	font-size: 150%;
+  }
+
+  .mmwiki_hdr .left {
+	  display: inline;
+	  margin-right: auto;
+	  margin-left: 0;
+  }
+
+  .mmwiki_hdr .right {
+	  display: inline;
+	  margin-left: auto;
+	  margin-right: 5%;
+  }
+
+  .mmwiki_hdr .left a span.index, .mmwiki_hdr .right a span.home {
+	  display: none;
+  }
+
+  .mmwiki_hdr .left a span.mobile-index, .mmwiki_hdr .right a span.mobile-home {
+	  display: inline;
+  }
+}
+
+#mmwiki {
+   margin-top: 4em;
+}
+
+@media screen and (max-device-width: 480px) and (orientation: portrait), 
+   screen and (max-device-width: 640px) and (orientation: landscape)  {
+  #mmwiki {
+     margin-top: 5em;
+  }
+}
+
 .mmwiki_page {
 	width: 70%;
 	margin-left: 20%;
@@ -55,12 +130,22 @@ body {
 	background: white;
 }
 
+@media screen and (max-device-width: 480px) and (orientation: portrait), 
+   screen and (max-device-width: 640px) and (orientation: landscape)  {
+	.mmwiki_page {
+		width: 100%;
+		margin-left: 2%;
+		margin-right: 2%;
+	}
+}
+
 .toc {
 	position: fixed;
 	margin-left: -15%;
 	width: 14%;
 	font-size: 80%;
 }
+
 
 .toc h3 {
 	font-size: 125%;
@@ -85,6 +170,18 @@ body {
 
 .toc ul ul ul {
 	padding-left: 1em;
+}
+
+@media screen and (max-device-width: 480px) and (orientation: portrait), 
+   screen and (max-device-width: 640px) and (orientation: landscape)  {
+	.image-center {
+		width: 100% !important;
+	}
+}
+
+@media screen and (max-device-width: 480px) and (orientation: portrait), 
+   screen and (max-device-width: 640px) and (orientation: landscape)  {
+  .toc { display: none; }
 }
 
 
@@ -209,3 +306,5 @@ span.anchor {
 	color: red;
 	font-weight: bold;
 }
+
+

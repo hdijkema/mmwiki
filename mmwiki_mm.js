@@ -7,6 +7,11 @@
 * and links for the Materia Medica Wiki pages. 
 *****************************************************************/
 
+function tr(txt)
+{
+	return txt;
+}
+
 class MMLinkProvider
 {
   constructor()
@@ -168,12 +173,18 @@ class MMWikiMM
 			if (author != "") { author = " (" + author + ")"; }
 			document.title = hdr.book() + author;
 			var h_html = '<div class="mmwiki_hdr">' + 
-						 '<div class="left">' + 
-							lp.mkLinkHRef("wiki://index", hdr.book() + author) + 
-						 '</div>' +
-						 '<div class="right">' +
-							lp.mkLinkHRef("wiki://_/index", 'Main index of Materia Medica Wiki') +
-						 '</div>' +
+						   '<div class="left">' + 
+								lp.mkLinkHRef("wiki://index", 
+												 '<span class="index">' + tr(hdr.book() + author) + '</span>' +
+												 '<span class="mobile-index">&#x2616;</span>'
+												 ) +
+							'</div>' +
+							'<div class="right">' +
+								lp.mkLinkHRef("wiki://_/index", 
+												  '<span class="home">' + tr("Main index of Materia Medica Wiki") + '</span>' +
+											     '<span class="mobile-home">&#x2617;</span>'
+											    ) + 
+							'</div>' +
 						 '</div>';
 			return h_html;
 		}
