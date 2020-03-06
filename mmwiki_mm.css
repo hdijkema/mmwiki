@@ -76,7 +76,7 @@ body {
    screen and (max-device-width: 640px) and (orientation: landscape)  {
   .mmwiki_hdr { 
 	position: fixed;
-	padding-top: 1em;
+	padding-top: 0;
 	margin-bottom: 1em;
 	padding-bottom: 0.5em;
 	border-bottom: 1px solid #404040;
@@ -84,11 +84,10 @@ body {
 	width: 100%;
 	margin-left: 0%;
 	margin-right: 0%;
-	position: fixed;
-	padding-top: 0;
 	display:block;
 	font-size: 150%;
   }
+
 
   .mmwiki_hdr .left {
 	  display: inline;
@@ -115,10 +114,18 @@ body {
    margin-top: 4em;
 }
 
+@media screen and (max-device-width: 640px) and (orientation: landscape)  {
+   .mmwiki_hdr {
+		font-size: 250%;
+		margin-bottom: 0;
+		padding-bottom: 0;
+   } 
+}
+
 @media screen and (max-device-width: 480px) and (orientation: portrait), 
    screen and (max-device-width: 640px) and (orientation: landscape)  {
   #mmwiki {
-     margin-top: 5em;
+     margin-top: 4em;
   }
 }
 
@@ -223,6 +230,50 @@ td img, th img, .logo img {
 span.anchor {
     top: -3em;
 }
+
+@media screen and (max-device-width: 480px) and (orientation: portrait), 
+   screen and (max-device-width: 640px) and (orientation: landscape)  {
+  .mm-index table, .mm-index tbody, .mm-index td, .mm-index tr {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		padding: 0;
+  } 
+  .mm-index thead, .mm-index th { 
+		display: none;
+  }
+  .mm-index td:nth-child(even) { background: white; }
+  .mm-index td:nth-child(odd)  { background: #baf5d7; }
+}
+
+/***********************************************
+ MMWiki Meta
+ ***********************************************/
+
+@media screen and (max-device-width: 480px) and (orientation: portrait), 
+   screen and (max-device-width: 640px) and (orientation: landscape)  {
+	.meta {
+		float: none;
+		width: 100%;
+		border: none;
+	}
+	.meta table {
+		width: 95%;
+	}
+	.meta table td .hover {
+		display: none;
+	}
+	.meta table td:nth-child(1) { display: none; }
+}
+
+@media screen and (max-device-width: 480px) and (orientation: portrait) {
+	.meta table td img { width: 100%; }
+}
+
+@media screen and (max-device-width: 640px) and (orientation: landscape)  {
+	.meta table td img { height: 70vh; width: auto; max-width: 100%; }
+}
+
 
 
 /***********************************************
