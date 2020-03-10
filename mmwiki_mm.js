@@ -17,6 +17,7 @@ class MMLinkProvider
   constructor()
   {
     this._context = "";
+    this._prefix = "";
 	 this._old_link_prov = new MMWiki_LinkProvider();
   }
 
@@ -30,9 +31,15 @@ class MMLinkProvider
 	  return this._context;
   }
 
+  setPrefix(p) 
+  {
+    this._prefix = p;
+  }
+
   mkLinkHRef(link, content)
   {
 	  var c = this._context;
+	  var p = this._prefix;
 	  
 	  if (link.startsWith("wiki://")) {
 		  link = link.replace("wiki://", "");
@@ -45,8 +52,13 @@ class MMLinkProvider
 			  page = link;
 		  } 
 		  if (c == "_") { c = ""; }
-		  if (c != "") { c = "context=" + c + "&"; }
-		  var nlink = "index.php?" + c + "page=" + page;
+		  if (c != "") { c = "/" + c; }
+		  
+		  if (p != "") { p = "/" + p; }
+
+
+		  var nlink = p + c + "/" + page;
+		  
 		  link = nlink;
 	  } 
 	  
@@ -78,7 +90,9 @@ class MMRemedyProvider
 	{
 		var a = uabbrev.toLowerCase();
 		if (a == "con") { a = "_con"; }
-		return "index.php?context=" + this._context + "&page=" + a;
+		//return "index.php?context=" + this._context + "&page=" + a;
+	   //return "/" + this._context + "/" + a;
+		return a;
 	}
 	
 	getLatinName(uabbrev)
@@ -104,7 +118,8 @@ class MMImageProvider
 	setContext(c) { this._context = c; }
 	
 	getImageSrc(img) { 
-		return "mm/" + this._context + "/" + img; 
+		//return "mm/" + this._context + "/" + img; 
+		return img;
 	}
 	
 	getImageSrcs(uabbrev)
@@ -163,6 +178,16 @@ class MMWikiMM
 			this._mmwiki.setIncludeProvider(this._incl_prov);
 			this._context = context;
 			this._abbrev = "";
+		}
+
+		setPrefix(prefix)
+		{
+			this._mmwiki.linkProvider().setPrefix(prefix);
+		}
+
+		getLanguages(mmwiki)
+		{
+			return this._mmwiki.getLanguages(mmwiki);
 		}
 		
 		headerHtml()
@@ -279,8 +304,59 @@ class MMWikiMM
 		}
 }
 
+function mmwikiPublish(context, page, content, f_ok, f_error)
+{
+	var m = new MMWikiMM(context);
+	var l = m.getLanguages(content);
 
+	var html = "";
 
+   var i;
+   for(i = 0; i < l.length; i++) {
+		var languages = l[i];
+		var lang = languages[0];
+		var j;
+		var sep = "";
+		var cl = "";
+		for(j = 0; j < languages.length; j++) {
+			cl += sep;
+			cl += languages[j];
+			sep = "_";
+		}
+
+		html += '<div id="lang_' + cl + '">';
+		var contents = m.toHtml(page, content, false, lang);
+		var toc = m.tocHtml();
+		var header = m.headerHtml();
+		html += '<div id="mmwiki_hdr">' + header + '</div>';
+		html += '<div id="mmwiki_toc"><div class="mmwiki_toc">' + toc + '</div></div>';
+	   html += '<div id="mmwiki"><div class="mmwiki">';
+		html += "<!-- begin contents -->";
+		html += contents  
+		html += "<!-- end contents -->";
+		html += '</div></div>';
+		html += '</div>';
+	}
+
+	var xhr = new XMLHttpRequest();
+	var url = "publish.php";
+
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-Type", "application/json");
+
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			f_ok();
+		} else if (xhr.readyState ===4) {
+			f_error();
+		}
+	}
+
+   if (page == "con") { page = "_con"; }	
+	var obj = { "context": context, "page": page, "content": html, "languages": l };
+	var data = JSON.stringify(obj);
+	xhr.send(data);
+}
 
 function mmwikiSave(context, page, content, f_ok, f_error)
 {
@@ -297,7 +373,8 @@ function mmwikiSave(context, page, content, f_ok, f_error)
 			f_error();
 		}
 	}
-        if (page == "con") { page = "_con"; }	
+
+   if (page == "con") { page = "_con"; }	
 	var obj = { "context": context, "page": page, "content": content };
 	var data = JSON.stringify(obj);
 	xhr.send(data);

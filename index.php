@@ -27,6 +27,7 @@ error_log(print_r($_GET, true));
   <div class="mmwiki_edit" id="mm_edit">
 	  <div id="editor_hdr">
 			<button id="save_btn" type="button" disabled onclick="document.mmwiki_save();">Save</button>
+			<button id="publish_btn" type="button" onclick="document.mmwiki_publish();">Publish</button>
 			<input type="text" id="image_name" value="" placeholder="Image name" />
 			<input id="image_upload_btn" type="file" name="image_file" />
 			<button id="image_upload_now" type="button" onclick="document.mmwiki_upload_image();">Uploaden</button>
@@ -80,6 +81,7 @@ error_log(print_r($_GET, true));
 			var abbrev = <?php echo "'$page'"; ?>; 
 			var context = <?php echo "'$context'"; ?>;
 			var m = new MMWikiMM(context);
+			m.setPrefix("login");
 			var lang = mmwikiLanguage();
 			var contents = m.toHtml(abbrev, txt, false, lang);
 			var toc = m.tocHtml();
@@ -171,6 +173,7 @@ error_log(print_r($_GET, true));
 			var close_btn = document.getElementById('close_btn');
 			var elem_mmwiki = document.getElementById('mmwiki');
 			var save_btn = document.getElementById('save_btn');
+			var publish_btn = document.getElementById('publish_btn');
 			var img_upload_btn = document.getElementById('image_upload_btn');
 			var img_upload_now = document.getElementById('image_upload_now');
 			var image_name = document.getElementById('image_name');
@@ -271,6 +274,12 @@ error_log(print_r($_GET, true));
 							save_btn.disabled = true;
 						}, function() { 
 							alert("Page cannot be saved");
+						}); 
+					}
+					document.mmwiki_publish = function() {
+						mmwikiPublish(context, page, editor.getValue(), function() { 
+						}, function() { 
+							alert("Page cannot be published");
 						}); 
 					}
 					document.mmwiki_upload_image = function() {

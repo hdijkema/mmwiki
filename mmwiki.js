@@ -644,7 +644,7 @@ class MMWiki
           }
         }
 
-        this.endSeq();
+		this.endDiv(0);
 
         this._html = this.implementHtml(this._html);
 
@@ -887,7 +887,7 @@ class MMWiki
 					var html = me.toHtml(txt, me._one_per_line, me._req_language);
 					if (div_class != "") html = "<div class=\"" + div_class + "\">" + html;
 					if (div_class != "") html += "</div>";
-					document.getElementById(div_id).innerHTML = html;A
+					document.getElementById(div_id).innerHTML = html;
 				}, function() { console.log("Error getting page " + include_page); }
 				);
 			});
@@ -1656,4 +1656,26 @@ class MMWiki
       }
     }
 
+    getLanguages(mmwiki)
+    {
+	  var matches = this.matchAll(mmwiki, this.re_section);
+
+      var all_languages = new Array();
+
+	  var i_m;
+      for(i_m = 0; i_m < matches.length; i_m++) {
+		  var match = matches[i_m];
+          var l = match[1];
+          var langs = l.split(',');
+          var i;
+		  var languages = new Array();
+          for(i = 0; i < langs.length; i++)  {
+            var lng = langs[i].trim();
+            languages.push(lng);
+          }
+		  all_languages.push(languages);
+      }
+
+	  return all_languages;
+    }
 }
