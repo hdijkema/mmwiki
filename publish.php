@@ -43,8 +43,10 @@ if (loggedIn()) {
 
 	$d_context = "";
 	if ($context != "" && $context != "_") { $d_context = "/" . $context; }
-	
-	$dir = "$MMWIKI_PREFIX/html$d_context";
+
+        $htmldir = "$MMWIKI_PREFIX/html";
+	if (!is_dir($htmldir)) { mkdir($htmldir); }
+	$dir = "$htmldir$d_context";
 	if (!is_dir($dir)) { mkdir($dir); }
 
 	$prefix_file = "$MMWIKI_PREFIX/html.pre";
