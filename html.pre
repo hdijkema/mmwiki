@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="mmwiki.css"></link>
+	<link rel="stylesheet" href="_style.css"></link>
+	<link rel="stylesheet" href="mmwiki_mm.css"></link>
+	<link rel="stylesheet" href="custom.css"></link>
+	<link rel="icon" href="favicon.png" sizes="32x32" />
+	<link rel="icon" href="favicon.png" sizes="192x192" />	
+	<title>@@title@@</title>
+	<style>@@langstyles@@</style>
+	<script>@@langscript@@</script>
+  </head>
+  <body onload="selectLanguage();">
+  <div class="mmwiki_page">
