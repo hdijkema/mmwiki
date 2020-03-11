@@ -1,5 +1,8 @@
 <?php
 # vim: ts=4 sw=4 sts=4 noet :
+if (!is_file("config.php")) {
+	copy("config.php.init", "config.php")
+}
 require_once("config.php");
 ?>
 <!DOCTYPE html>

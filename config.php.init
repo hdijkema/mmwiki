@@ -8,9 +8,9 @@ global $MMWIKI_PREFIX;
 
 $server = $_SERVER['SERVER_NAME'];
 if ($server == "localhost") {
-	$MMWIKI_PREFIX = "c:/xampp/htdocs/mmwiki";
+	$MMWIKI_PREFIX = "";
 } else {
-	$MMWIKI_PREFIX = "/data/www/mmwiki";
+	$MMWIKI_PREFIX = "";
 }
 $MMWIKI_HREF_PREFIX = "";
 
