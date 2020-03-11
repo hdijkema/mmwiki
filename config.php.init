@@ -25,6 +25,8 @@ if (!is_dir($MMWIKI_PREFIX)) {
       mkdir("$MMWIKI_PREFIX/ace");
       configureFirst("Download ace editor from <a href=\"https://github.com/ajaxorg/ace-builds/releases/\">Ace Releases</a> and install directory 'src-min-noconflict' under MMWIKI_PREFIX/ace");
   }
+
+  
   if (!file_exists("$MMWIKI_PREFIX/ace/src-min-noconflict/mode-mmwiki.js")) {
      copy("$MMWIKI_PREFIX/mode-mmwiki.js", "$MMWIKI_PREFIX/ace/src-min-noconflict/mode-mmwiki.js");
   } else {
@@ -34,6 +36,9 @@ if (!is_dir($MMWIKI_PREFIX)) {
         copy("$MMWIKI_PREFIX/mode-mmwiki.js", "$MMWIKI_PREFIX/ace/src-min-noconflict/mode-mmwiki.js");
      }
   }
+
+  touch(".installed");
+
 
   ## Update remedies
 
@@ -46,6 +51,7 @@ if (!is_dir($MMWIKI_PREFIX)) {
   $time1 = filemtime("$MMWIKI_PREFIX/images.js");
   $time2 = filemtime("$MMWIKI_PREFIX/images/_images.idx");
   $time3 = filemtime("$MMWIKI_PREFIX/images/_attributes.json");
+
   if ($time2 > $time1 || $time3 > $time1) { convertImages($MMWIKI_HREF_PREFIX); }
 }
 
@@ -142,6 +148,7 @@ function convertImages($href_prefix)
 
 function configureFirst($msg)
 {
+	unlink(".installed");
     echo "<html><head><title>Configure first</title></head><body><b>$msg</b></body></html>";
     exit(0);
 }
