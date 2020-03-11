@@ -8,6 +8,7 @@ require_once("config.php");
 <!DOCTYPE html>
 <html>
   <head>
+	<!-- mmwiki online generated html -->
 	<meta charset="utf-8">
 	<link rel="stylesheet" href="mmwiki.css"></link>
 	<link rel="stylesheet" href="_style.css"></link>
