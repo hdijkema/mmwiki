@@ -501,6 +501,8 @@ class MMWiki
 			}
 			return r;
 		}
+
+		this._includes = new Array();
     }
 	
 	header() { return this._header; }
@@ -590,6 +592,8 @@ class MMWiki
             this._no_dashes = true;
           } else if (line.isKey(":no-dash-end")) {
             this._no_dashes = false;
+		  } else if (line.isKeyVal(":book")) {
+			this._header.setBook(line.value());
           } else if (line.isKeyVal(":local-name")) {
             this.addHead(-1, 20, "h2", line.value());
           } else if (line.isKeyVal(":source")) {
@@ -651,11 +655,12 @@ class MMWiki
         return this._html;
     }
 
-	addIncludes()
+	addIncludes(ok_f, error_f, finish_f)
 	{
-		var i;
-		for(i = 0; i < this._includes.length; i++) {
-			this._includes[i]();
+		if (this._includes.length > 0) {
+			this._includes[0](this._includes, 0, ok_f, error_f, finish_f);
+		} else {
+			finish_f();
 		}
 	}
 
@@ -882,13 +887,19 @@ class MMWiki
 			var div_id = "incl_" + this._incl_prefix + id.toString();
 			this._html += "<div id=\"" + div_id + "\"></div>"; 
 			var me = this;
-			this._includes.push(function() {
+			this._includes.push(function(includes, includes_idx, ready_f, error_f, finish_f) {
 				me.includeProvider().getPage(include_page, function(txt) {
 					var html = me.toHtml(txt, me._one_per_line, me._req_language);
 					if (div_class != "") html = "<div class=\"" + div_class + "\">" + html;
 					if (div_class != "") html += "</div>";
-					document.getElementById(div_id).innerHTML = html;
-				}, function() { console.log("Error getting page " + include_page); }
+					ready_f(div_id, html);
+					includes_idx += 1;
+					if (includes_idx == includes.length) {
+						finish_f();
+					} else {
+						includes[includes_idx](includes, includes_idx, ready_f, error_f, finish_f);
+					}
+				}, function() { error_f(div_id, include_page); }
 				);
 			});
 		}

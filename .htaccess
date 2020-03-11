@@ -1,3 +1,4 @@
+ErrorDocument 404 /html/404.html
 RewriteEngine on
 RewriteRule ^login[/]index$					/login		              	[L,NC]
 RewriteRule ^login$						/index.php?login              	[L,NC]
@@ -9,11 +10,11 @@ RewriteRule ^login[/]([^/]+)[/]([^.]+)[.](js|css|php)$		/$2.$3				[L,NC]
 RewriteRule ^login[/]([^/]+)[/]([^/]+)$				/index.php?context=$1&page=$2	[L,NC]
 RewriteRule ^login[/]([^.]+)[.](svg|jpg|png)$			/mm/$1.$2			[L,NC]
 RewriteRule ^login[/]([^.]+)[.](js|css|php)$			/$1.$2				[L,NC]
-RewriteRule ^login[/]([^/]+)$					/index.php?page=$2		[L,NC]
+RewriteRule ^login[/]([^/]+)$					/index.php?page=$1		[L,NC]
 RewriteRule ^index[.]php.*$					$0				[L,NC]
 RewriteRule ^.*[/]([^.]+)[.](js|php|css)$			/$1.$2				[L,NC]
 RewriteRule ^[^.]+[.](js|php|css)$				$0				[L,NC]
-RewriteRule ^login[/].*$						$0				[L]
+RewriteRule ^login[/].*$					$0				[L]
 RewriteRule ^html[/](.*[^.]+[.](svg|jpg|png))$			/mm/$1				[L,NC]
 RewriteRule ^html[/](.*)[/][^.]+$				$0.html				[L]
 RewriteRule ^html[/][^.]+$					$0.html				[L]

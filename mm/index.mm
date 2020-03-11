@@ -6,6 +6,8 @@
 
 :begin[en]
 
+L[wiki://404|404]
+
 :head=Information
 
 * L[wiki://zc4/index|ZC4 Manual]

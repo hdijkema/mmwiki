@@ -24,6 +24,7 @@ if (is_file($file)) {
 	$content = file_get_contents($file);
 	echo $content;
 } else {
+	http_response_code(404);
 	echo "";
 }
 

@@ -359,3 +359,41 @@ span.anchor {
 }
 
 
+/***********************************************
+ MMWiki Publish All
+ ***********************************************/
+
+.publish_all {
+    width: 10cm;
+    margin: 1cm;
+    padding: 1cm;
+    background: white;
+    z-index: 100;
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    margin-left: -5cm;
+    display: none;
+    border: 3px solid green;
+}
+
+.publish_all table {
+    width: 100%;
+}
+
+.publish_all td.label {
+	width: 30%;
+}
+
+.publish_all #publish_all_msg {
+	text-align:center;
+}
+
+.publish_all span.error {
+	color: red;
+	font-weight: bold;
+}
+
+.publish_all button {
+	width: 100%;
+}

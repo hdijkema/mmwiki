@@ -1,7 +1,6 @@
 <?php
 # vim: ts=4 sw=4 sts=4 noet :
 require_once("config.php");
-error_log(print_r($_GET, true));
 ?>
 <!DOCTYPE html>
 <html>
@@ -28,6 +27,7 @@ error_log(print_r($_GET, true));
 	  <div id="editor_hdr">
 			<button id="save_btn" type="button" disabled onclick="document.mmwiki_save();">Save</button>
 			<button id="publish_btn" type="button" onclick="document.mmwiki_publish();">Publish</button>
+			<button id="publish_all_btn" type="button" onclick="document.mmwiki_publish_all();">Publish All</button>
 			<input type="text" id="image_name" value="" placeholder="Image name" />
 			<input id="image_upload_btn" type="file" name="image_file" />
 			<button id="image_upload_now" type="button" onclick="document.mmwiki_upload_image();">Uploaden</button>
@@ -48,7 +48,22 @@ error_log(print_r($_GET, true));
 		<tr><td><button type="button" onclick="document.mmwiki_cancel_login();" >Cancel</button></td>
 			<td><button type="button" onclick="document.mmwiki_do_login();" id="do-login">Login</button>
 		</td></tr>
-		<p id="login-msg">&nbsp;</p>
+		<tr><td colspan="2">
+			<p id="login-msg">&nbsp;</p>
+		</tr>
+	</table>
+  </div>
+  <div class="publish_all" id="publish_all">
+	<h1>Publishing all pages of context</h1>
+	<table>
+		<tr><td class="label">Context</td><td id="all_context"></td></tr>
+		<tr><td class="label">Page</td><td id="all_page"></td></tr>
+		<tr><td class="label">Page index</td><td id="all_page_idx"></td></tr>
+		<tr><td class="label">Pages</td><td id="all_npages"></td></tr>
+		<tr><td colspan="2"><button type="button" id='publish_all_finish' onclick="document.getElementById('publish_all').style.display = 'none';" >Finish</button></td>
+		<tr><td colspan="2">
+			<p id="publish_all_msg">&nbsp;</p>
+		</tr>
 	</table>
   </div>
   <div id="mmwiki"><!-- This is where the generated HTML goes --></div>
@@ -275,13 +290,35 @@ error_log(print_r($_GET, true));
 						}, function() { 
 							alert("Page cannot be saved");
 						}); 
-					}
+					};
 					document.mmwiki_publish = function() {
 						mmwikiPublish(context, page, editor.getValue(), function() { 
 						}, function() { 
 							alert("Page cannot be published");
 						}); 
-					}
+					};
+					document.mmwiki_publish_all = function() {
+						document.getElementById('publish_all').style.display = 'block';
+						document.getElementById('all_context').innerHTML = context;
+						document.getElementById('publish_all_finish').disabled = true;
+						document.getElementById('publish_all_msg').innerHTML = "&nbsp;";
+						mmwikiPublishAll(context, 
+										 function(context, page, page_idx, pages) {
+											var npages = pages.length;
+											document.getElementById('all_page').innerHTML = page;
+											document.getElementById('all_page_idx').innerHTML = page_idx;
+											document.getElementById('all_npages').innerHTML = npages;
+										 },
+										 function() {
+											document.getElementById('publish_all_msg').innerHTML = "All pages published";
+											document.getElementById('publish_all_finish').disabled = false;
+										 },
+										 function() {
+											document.getElementById('publish_all_msg').innerHTML = '<span class="error">Cannot publish all pages</span>';
+											document.getElementById('publish_all_finish').disabled = false;
+										 }
+									    );
+					};
 					document.mmwiki_upload_image = function() {
 						if (img_upload_btn.files.length > 0) {
 							var img_file = img_upload_btn.files[0];

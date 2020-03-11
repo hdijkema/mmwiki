@@ -189,6 +189,12 @@ class MMWikiMM
 		{
 			return this._mmwiki.getLanguages(mmwiki);
 		}
+
+		book()
+		{
+			var hdr = this._mmwiki.header();
+			return hdr.book();
+		}
 		
 		headerHtml()
 		{
@@ -253,9 +259,23 @@ class MMWikiMM
 			return d_html;
 		}
 
+		addIncludesRaw(ready_f, error_f, finish_f) {
+			this._mmwiki.addIncludes(ready_f, error_f, finish_f);
+		}
+
 		addIncludes() 
 		{
-			this._mmwiki.addIncludes();
+			this._mmwiki.addIncludes(
+								function(id, html) {
+									document.getElementById(id).innerHTML = html;
+								},
+								function(id, include_page) {
+									console.log("Error including id '" + id + "', page '" + include_page + "'");
+								},
+								function() { 
+									// finish includes, does nothing here
+								}
+							);
 		}
 		
 		tocHtml() 
@@ -274,6 +294,11 @@ class MMWikiMM
 		   var t_html = "";
 		   var lang = mmwikiLanguage();
 		   var h = "";
+
+			if (toc.size() == 0) { 
+				return "";
+			}
+
 		   if (lang == "nl") { h = "Inhoud"; }
 		   else { h = "Contents"; }
 		   
@@ -304,12 +329,62 @@ class MMWikiMM
 		}
 }
 
+function mmwikiPublishAllPage(incl_provider, context, pages, page_idx, f_progress, f_ok, f_error)
+{
+	if (page_idx >= pages.length) {
+		f_ok();
+	} else {
+		var page = pages[page_idx];
+		incl_provider.getPage(page, 
+									 function(content) {
+										 f_progress(context, page, page_idx + 1, pages);
+										 mmwikiPublish(context, page, content,
+															function() {
+																page_idx += 1;
+																mmwikiPublishAllPage(incl_provider, context, pages, page_idx, f_progress, f_ok, f_error);
+															},
+															f_error
+														  );
+									 },
+									 f_error
+									);
+	}
+}
+
+function mmwikiPublishAll(context, f_progress, f_ok, f_error)
+{
+   var xhr = new XMLHttpRequest();
+   var url = "get_pages.php";
+	var incl_provider = new MMIncludeProvider();
+	incl_provider.setContext(context);
+
+	var url = "get_pages.php?context=" + context;
+	xhr.open("GET", url, true);
+
+   xhr.onreadystatechange = function () {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			var pages_str = xhr.responseText;
+			var pages = pages_str.split(",");
+
+			if (pages.length > 0) {
+				var page_idx = 0;
+				mmwikiPublishAllPage(incl_provider, context, pages, page_idx, f_progress, f_ok, f_error);
+			}
+       } else if (xhr.readyState ===4) {
+          f_error();
+       }
+    }
+
+    xhr.send();
+}
+
 function mmwikiPublish(context, page, content, f_ok, f_error)
 {
 	var m = new MMWikiMM(context);
 	var l = m.getLanguages(content);
 
 	var html = "";
+   var book = "";
 
    var i;
    for(i = 0; i < l.length; i++) {
@@ -328,6 +403,7 @@ function mmwikiPublish(context, page, content, f_ok, f_error)
 		var contents = m.toHtml(page, content, false, lang);
 		var toc = m.tocHtml();
 		var header = m.headerHtml();
+		book = m.book();
 		html += '<div id="mmwiki_hdr">' + header + '</div>';
 		html += '<div id="mmwiki_toc"><div class="mmwiki_toc">' + toc + '</div></div>';
 	   html += '<div id="mmwiki"><div class="mmwiki">';
@@ -338,24 +414,35 @@ function mmwikiPublish(context, page, content, f_ok, f_error)
 		html += '</div>';
 	}
 
-	var xhr = new XMLHttpRequest();
-	var url = "publish.php";
+	m.addIncludesRaw(
+			function(id, incl_html) {
+				var needle = "<div id=\"" + id + "\"></div>";
+				html = html.replace(needle, "<!-- " + id + "--> " + incl_html);
+			},
+			function(id, incl_page) {
+				console.log("Error including page '" + incl_page + "', id '" + id + "'");
+			}, 
+			function() {
+				var xhr = new XMLHttpRequest();
+				var url = "publish.php";
+			
+				xhr.open("POST", url, true);
+				xhr.setRequestHeader("Content-Type", "application/json");
+			
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState === 4 && xhr.status === 200) {
+						f_ok();
+					} else if (xhr.readyState ===4) {
+						f_error();
+					}
+				}
 
-	xhr.open("POST", url, true);
-	xhr.setRequestHeader("Content-Type", "application/json");
-
-	xhr.onreadystatechange = function () {
-		if (xhr.readyState === 4 && xhr.status === 200) {
-			f_ok();
-		} else if (xhr.readyState ===4) {
-			f_error();
-		}
-	}
-
-   if (page == "con") { page = "_con"; }	
-	var obj = { "context": context, "page": page, "content": html, "languages": l };
-	var data = JSON.stringify(obj);
-	xhr.send(data);
+				if (page == "con") { page = "_con"; }	
+				var obj = { "book": book, "context": context, "page": page, "content": html, "languages": l };
+				var data = JSON.stringify(obj);
+				xhr.send(data);
+			}
+	);
 }
 
 function mmwikiSave(context, page, content, f_ok, f_error)
