@@ -1,5 +1,7 @@
 ErrorDocument 404 /html/404.html
 RewriteEngine on
+RewriteRule ^.+[/]favicon.png$					/favicon.png			[L,NC]
+RewriteRule ^favicon.png$					favicon.png			[L,NC]
 RewriteRule ^login[/]index$					/login		              	[L,NC]
 RewriteRule ^login$						/index.php?login              	[L,NC]
 RewriteRule ^login[/]$						/index.php?login              	[L,NC]
