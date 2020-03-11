@@ -18,7 +18,11 @@ if (isset($_GET['page'])) {
 
 if ($page == "") { $page = "index"; }
 
-$file = "$MMWIKI_PREFIX/mm$d_context/$page.mm";
+if (substr_compare($page, ".css", -strlen(".css")) === 0) {
+	$file = "$MMWIKI_PREFIX/$page";
+} else {
+	$file = "$MMWIKI_PREFIX/mm$d_context/$page.mm";
+}
 
 if (is_file($file)) {
 	$content = file_get_contents($file);

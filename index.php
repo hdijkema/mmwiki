@@ -9,7 +9,7 @@ require_once("config.php");
 	<link rel="stylesheet" href="mmwiki.css"></link>
 	<link rel="stylesheet" href="_style.css"></link>
 	<link rel="stylesheet" href="mmwiki_mm.css"></link>
-	<link rel="stylesheet" href="custom.css"></link>
+	<link rel="stylesheet" id="custom_css" href="custom.css"></link>
 	<link rel="icon" href="favicon.png" sizes="32x32" />
 	<link rel="icon" href="favicon.png" sizes="192x192" />	
 	<script src="mmwiki.js" type="text/javascript" charset="utf-8"></script>
@@ -28,6 +28,7 @@ require_once("config.php");
 			<button id="save_btn" type="button" disabled onclick="document.mmwiki_save();">Save</button>
 			<button id="publish_btn" type="button" onclick="document.mmwiki_publish();">Publish</button>
 			<button id="publish_all_btn" type="button" onclick="document.mmwiki_publish_all();">Publish All</button>
+			<button id="css_btn" type="button" onclick="document.mmwiki_edit_css();">Css</button>
 			<input type="text" id="image_name" value="" placeholder="Image name" />
 			<input id="image_upload_btn" type="file" name="image_file" />
 			<button id="image_upload_now" type="button" onclick="document.mmwiki_upload_image();">Uploaden</button>
@@ -93,6 +94,11 @@ require_once("config.php");
 	?>
 	<script>
 		document.mmwiki_updater = function(txt) {
+			if (document.edit_css) {
+				txt = document.mmwiki_txt;
+			} else {
+				document.mmwiki_txt = txt;
+			}
 			var abbrev = <?php echo "'$page'"; ?>; 
 			var context = <?php echo "'$context'"; ?>;
 			var m = new MMWikiMM(context);
@@ -291,6 +297,27 @@ require_once("config.php");
 							alert("Page cannot be saved");
 						}); 
 					};
+					document.mmwiki_edit_css = function() {
+						if (document.edit_css == true) {
+							mmwikiSaveCss(editor.getValue(), 
+                                          function() { 
+											 var link = document.getElementById("custom_css");
+											 link.href = link.href + "?id=" + new Date().getMilliseconds();
+											 document.edit_css = false;
+										 	 editor.setValue(document.prev_txt); 
+										  }, 
+										  function() { alert("Css cannot be saved"); }
+										 );
+						} else {
+							document.prev_txt = editor.getValue();
+							mmwikiGetCss(function(css) { 
+											editor.setValue(css);
+											document.edit_css = true; 
+										 }, 
+										 function() { alert("CSS cannot be loaded"); }
+										);
+						}
+					}
 					document.mmwiki_publish = function() {
 						mmwikiPublish(context, page, editor.getValue(), function() { 
 						}, function() { 

@@ -445,6 +445,17 @@ function mmwikiPublish(context, page, content, f_ok, f_error)
 	);
 }
 
+function mmwikiGetCss(f_ok, f_error)
+{
+	var incl_prov = new MMIncludeProvider();
+	incl_prov.getPage("custom.css", f_ok, f_error);
+}
+
+function mmwikiSaveCss(css, f_ok, f_error)
+{
+	mmwikiSave("css", "custom.css", css, f_ok, f_error);
+}
+
 function mmwikiSave(context, page, content, f_ok, f_error)
 {
 	var xhr = new XMLHttpRequest();

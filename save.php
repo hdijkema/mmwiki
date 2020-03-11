@@ -10,13 +10,18 @@ if (loggedIn()) {
 	$context = $v->context;
 	$content = $v->content;
 
-	$d_context = "";
-	if ($context != "" && $context != "_") { $d_context = "/" . $context; }
+	if (substr_compare($page, ".css", -strlen(".css")) === 0) {
+		$file = "$MMWIKI_PREFIX/$page";
+	} else {
+		$d_context = "";
+		if ($context != "" && $context != "_") { $d_context = "/" . $context; }
 	
-	$dir = "$MMWIKI_PREFIX/mm$d_context";
-	if (!is_dir($dir)) { mkdir($dir); }
+		$dir = "$MMWIKI_PREFIX/mm$d_context";
+	
+		if (!is_dir($dir)) { mkdir($dir); }
 
-	$file = "$MMWIKI_PREFIX/mm$d_context/$page.mm";
+		$file = "$MMWIKI_PREFIX/mm$d_context/$page.mm";
+	}
 	$fh = fopen($file, "w");
 	fputs($fh, $content);
 	fclose($fh);
