@@ -746,7 +746,7 @@ class MMWiki
       var p_div = (div_id == "") ? div : div_id;
       this._divs.push_back(p_div);
       this._div_levels.push_back(level);
-      this._html += "<div class=\"" + div + more + "\" >";
+      this._html += "<div class=\"" + div + "\"" +  more + ">";
       this.startSeq();
     }
 
