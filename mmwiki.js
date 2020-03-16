@@ -471,7 +471,7 @@ class MMWiki
 		this.re_cleanup_open = /([234PQHNMITBRCLti^!+-]|R[234])\[([^|]+[|]){0, 1}/;
 		this.re_cleanup_close = /(\]|[}])/;
 
-		this.re_width = /([0-9.]+)(%|em|pt|mm|cm){0,1}/;
+		this.re_width = /([0-9.]+)(%|em|pt|mm|cm|px){0,1}/;
 
 		this._highlight_words = new Array();
 
