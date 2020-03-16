@@ -1026,6 +1026,7 @@ class MMWiki
 		              "<div class=\"image\">" +
 					  "<img src=\"" + src + "\" style=\"width:100%;\" />";
 		if (subscript != "") {
+			subscript =  this.processSeq(subscript);
 			this._html += "<div class=\"subscript\">" + subscript + "</div>";
 		}
 		this._html += "</div></div>";
