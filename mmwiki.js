@@ -733,12 +733,20 @@ class MMWiki
       return n_html;
     }
 
-    startDiv(level, div, div_id = "")
+    startDiv(level, val, div_id = "")
     {
+      var idx = val.indexOf(",");
+	  var more = "";
+	  var div = val;
+	  if (idx >= 0) {
+		div = val.substr(0, idx);
+		more = val.substr(idx + 1);
+		more = " " + more;
+	  }
       var p_div = (div_id == "") ? div : div_id;
       this._divs.push_back(p_div);
       this._div_levels.push_back(level);
-      this._html += "<div class=\"" + div + "\" >";
+      this._html += "<div class=\"" + div + more + "\" >";
       this.startSeq();
     }
 
