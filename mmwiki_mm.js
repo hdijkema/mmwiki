@@ -67,7 +67,7 @@ class MMLinkProvider
 			target = ' target="_blank"'; 
 		}
 	  
-	  return "<a href=\"" + link "\"" + target + ">" + content + "</a>";
+	  return "<a href=\"" + link + "\"" + target + ">" + content + "</a>";
   }
 
   mkLinkId(n) { return this._old_link_prov.mkLinkId(n); }
