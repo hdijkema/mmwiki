@@ -36,7 +36,7 @@ class MMLinkProvider
     this._prefix = p;
   }
 
-  mkLinkHRef(link, content)
+  mkLinkHRef(link, content, tab_target)
   {
 	  var c = this._context;
 	  var p = this._prefix;
@@ -61,8 +61,11 @@ class MMLinkProvider
 		  
 		  link = nlink;
 	  } 
+
+	  var target = "";
+	  if (tab_target) { target = ' target="_blank"'; }
 	  
-	  return "<a href=\"" + link +"\">" + content + "</a>";
+	  return "<a href=\"" + link + target + "\">" + content + "</a>";
   }
 
   mkLinkId(n) { return this._old_link_prov.mkLinkId(n); }

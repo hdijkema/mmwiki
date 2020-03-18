@@ -152,7 +152,8 @@ const MMWIKI_TOK_NOOP = -2,
       MMWIKI_TOK_LINK = 219,
       MMWIKI_TOK_LITERAL = 220,
       MMWIKI_TOK_ANCHOR = 221,
-	  MMWIKI_TOK_INLINE_IMAGE = 222;
+	  MMWIKI_TOK_INLINE_IMAGE = 222,
+      MMWIKI_TOK_LINK_TAB = 223;
 
 class MMWiki_Token
 {
@@ -418,9 +419,11 @@ class MMWiki_MetaProvider
 
 class MMWiki_LinkProvider
 {
-  mkLinkHRef(link, content)
+  mkLinkHRef(link, content, tab_target)
   {
-    return "<a href=\"" + link + "\">" + content + "</a>";
+	var target = "";
+	if (tab_target) { target = ' target="_blank"'; }
+    return "<a href=\"" + link + target + "\">" + content + "</a>";
   }
 
   mkLinkId(name) {
@@ -456,7 +459,7 @@ class MMWiki
 		this.re_html_implement = /[@][!][@]([^@]+)[@][%][@]/;
 
 		this.re_symptom = /([CSGZR])([A-Z]*)[{]([^}{]*)[}]/;
-		this.re_markup = /([234PQHNMITBRCLti^!+-]|R[234])\[([^\[\]]*)\]/;
+		this.re_markup = /([234PQHNMITBRCLlti^!+-]|R[234])\[([^\[\]]*)\]/;
 		this.re_modalities = /([<>])\[([^\[\]]*)\]/;
 		this.re_symptom_grade = /([234])\[([^\[\]]*)\]/;
 		this.re_anchor = /N\[[^\]]+\]/;
@@ -468,7 +471,7 @@ class MMWiki
 		this.re_literals = /\\[:{}\[\]]|\[BR\]/;
 
 		this.re_cleanup_sym_open = /([CSGZR])([A-Z]*)[{]/;
-		this.re_cleanup_open = /([234PQHNMITBRCLti^!+-]|R[234])\[([^|]+[|]){0, 1}/;
+		this.re_cleanup_open = /([234PQHNMITBRCLlti^!+-]|R[234])\[([^|]+[|]){0, 1}/;
 		this.re_cleanup_close = /(\]|[}])/;
 
 		this.re_width = /([0-9.]+)(%|em|pt|mm|cm|px){0,1}/;
@@ -1225,7 +1228,8 @@ class MMWiki
       else if (type == MMWIKI_TOK_REMEDY3) { content = this.mkRemedy(3, content); content_made = true; }
       else if (type == MMWIKI_TOK_REMEDY4) { content = this.mkRemedy(4, content); content_made = true; }
       else if (type == MMWIKI_TOK_ANCHOR) { o = "<span class=\"anchor\" id=\"" + this.mkAnchor(content) + "\" >"; content = ""; }
-      else if (type == MMWIKI_TOK_LINK) { return this.mkLink(t); }
+      else if (type == MMWIKI_TOK_LINK) { return this.mkLink(t, false); }
+      else if (type == MMWIKI_TOK_LINK_TAB) { return this.mkLink(t, true); }
       else if (type == MMWIKI_TOK_RADIATES) { o = "<span class=\"radiating\">@!@#1878@%@@!@nbsp@%@"; }
       else if (type == MMWIKI_TOK_WORSE) { o = "<span class=\"modality\">@!@lt@%@@!@nbsp@%@"; }
       else if (type == MMWIKI_TOK_BETTER) { o = "<span class=\"modality\">@!@gt@%@@!@nbsp@%@"; }
@@ -1265,13 +1269,13 @@ class MMWiki
       return html;
     }
 
-    mkLink(t)
+    mkLink(t, tab_target)
     {
       var link = t.subTokens()[0];
       var content = t.subTokens()[2];
 	  var href = this.generateHtml(link);
 	  var a = this.generateHtml(content);
-      return this.linkProvider().mkLinkHRef(href, a);
+      return this.linkProvider().mkLinkHRef(href, a, tab_target);
     }
 
     mkAnchor(n)
@@ -1394,8 +1398,9 @@ class MMWiki
           else if (cmd == "H") type = MMWIKI_TOK_HIGHLIGHT;
 		    else if (cmd == "C") type = MMWIKI_TOK_CLASSIFICATION;
 		  else if (cmd == "!") type = MMWIKI_TOK_LITERAL;
-		  else if (cmd == "L") {
+		  else if (cmd == "L" || cmd == "l") {
 			  type = MMWIKI_TOK_LINK;
+			  if (cmd == "l") { type == MMWIKI_TOK_LINK_TAB; }
 			  var idx = content.indexOf("|");
 			  if (idx >= 0) {
 				  has_modifier = true;
