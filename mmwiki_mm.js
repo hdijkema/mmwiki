@@ -63,7 +63,9 @@ class MMLinkProvider
 	  } 
 
 	  var target = "";
-	  if (tab_target) { target = ' target="_blank"'; }
+	  if (tab_target) { 
+			target = ' target="_blank"'; 
+		}
 	  
 	  return "<a href=\"" + link + target + "\">" + content + "</a>";
   }
@@ -210,13 +212,13 @@ class MMWikiMM
 						   '<div class="left">' + 
 								lp.mkLinkHRef("wiki://index", 
 												 '<span class="index">' + tr(hdr.book() + author) + '</span>' +
-												 '<span class="mobile-index">&#x2616;</span>'
+												 '<span class="mobile-index">&#x2616;</span>', false
 												 ) +
 							'</div>' +
 							'<div class="right">' +
 								lp.mkLinkHRef("wiki://_/index", 
 												  '<span class="home">' + tr("Main index of Materia Medica Wiki") + '</span>' +
-											     '<span class="mobile-home">&#x2617;</span>'
+											     '<span class="mobile-home">&#x2617;</span>', false
 											    ) + 
 							'</div>' +
 						 '</div>';
