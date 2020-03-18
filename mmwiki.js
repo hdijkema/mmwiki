@@ -1400,7 +1400,7 @@ class MMWiki
 		  else if (cmd == "!") type = MMWIKI_TOK_LITERAL;
 		  else if (cmd == "L" || cmd == "l") {
 			  type = MMWIKI_TOK_LINK;
-			  if (cmd == "l") { type == MMWIKI_TOK_LINK_TAB; }
+			  if (cmd == "l") { type = MMWIKI_TOK_LINK_TAB; }
 			  var idx = content.indexOf("|");
 			  if (idx >= 0) {
 				  has_modifier = true;
