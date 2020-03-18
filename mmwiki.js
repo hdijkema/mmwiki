@@ -423,7 +423,7 @@ class MMWiki_LinkProvider
   {
 	var target = "";
 	if (tab_target) { target = ' target="_blank"'; }
-    return "<a href=\"" + link + target + "\">" + content + "</a>";
+    return "<a href=\"" + link + "\"" + target + ">" + content + "</a>";
   }
 
   mkLinkId(name) {
