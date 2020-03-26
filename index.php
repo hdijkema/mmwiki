@@ -21,6 +21,7 @@ require_once("config.php");
 	<script src="images.js" type="text/javascript" charset="utf-8"></script>
 	<script src="mmwiki_mm.js" type="text/javascript" charset="utf-8"></script>
 	<script src="ace/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script src="custom.js" type="text/javascript" charset="utf-8"></script>
 	<title>Materia Medica Wiki</title>
   </head>
   <body>
@@ -192,6 +193,7 @@ require_once("config.php");
 			var page = <?php echo "'$page'"; ?>;
 			var contents = <?php echo "'$contents'"; ?>;
 			var login_btn_yes = <?php echo $login_btn_yes; ?>;
+			document.mmwiki_edit_mode = true;
 			var elem_editor = document.getElementById('editor');
 			var div_editor = document.getElementById('mm_edit'); 
 			var open_btn = document.getElementById('open_btn');
