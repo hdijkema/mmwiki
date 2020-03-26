@@ -591,6 +591,12 @@ class MMWiki
 
 		  if (line.isKeyVal(":include")) {
 			this.addInclude(line.value());
+		  } else if (line.isKey(":dynamic")) {
+			this.addDynamic();
+		  } else if (line.isKeyVal(":js")) {
+			this.addJs(line.value());
+		  } else if (line.isKey(":end-dynamic")) {
+			this.addEndDynamic();
 		  } else if (line.isKey(":no-dash-begin")) {
             this._no_dashes = true;
           } else if (line.isKey(":no-dash-end")) {
@@ -883,6 +889,22 @@ class MMWiki
       }
       return false;
     }
+
+	addDynamic()
+	{
+		this._html += "<script>\n";
+	}
+
+	endDynamic()
+	{
+		this._html += "</script>\n";
+	}
+
+	addJs(line)
+	{
+		this._html += line;
+		this._html += "\n";
+	}
 
 	addInclude(line)
 	{
