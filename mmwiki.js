@@ -895,7 +895,7 @@ class MMWiki
 		this._html += "<script>\n";
 	}
 
-	endDynamic()
+	addEndDynamic()
 	{
 		this._html += "</script>\n";
 	}
