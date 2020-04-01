@@ -603,10 +603,20 @@ class MMWiki
             this._no_dashes = false;
 		  } else if (line.isKeyVal(":book")) {
 			this._header.setBook(line.value());
+		  } else if (line.isKeyVal(":h1")) {
+			this.addHead(-1, 15, "h1", line.value(), "h1");
+		  } else if (line.isKeyVal(":h2")) {
+			this.addHead(-1, 15, "h2", line.value(), "h2");
+		  } else if (line.isKeyVal(":h3")) {
+			this.addHead(-1, 15, "h3", line.value(), "h3");
+		  } else if (line.isKeyVal(":h4")) {
+			this.addHead(-1, 15, "h4", line.value(), "h4");
+		  } else if (line.isKeyVal(":h5")) {
+			this.addHead(-1, 15, "h5", line.value(), "h5");
           } else if (line.isKeyVal(":local-name")) {
-            this.addHead(-1, 20, "h2", line.value());
+            this.addHead(-1, 20, "h2", line.value(), "local-name");
           } else if (line.isKeyVal(":source")) {
-            this.addHead(-1, 30, "h3", line.value());
+            this.addHead(-1, 30, "h3", line.value(), "source");
           } else if (line.isKeyVal(":head")) {
             this.addHead(0, 40, "h4", line.value());
           } else if (line.isKeyVal(":head2")) {
@@ -615,10 +625,36 @@ class MMWiki
             this.addRubric(2, 60, "rubric", line.value());
           } else if (line.isKeyVal(":rubric2")) {
             this.addRubric(3, 70, "rubric2", line.value());
-          } else if (line.isKeyVal(":div-begin")) {
+          } else if (line.isKeyVal(":div-begin") || line.isKeyVal(":div")) {
             this.startDiv(-1, line.value().trim(), "div-begin");
-          } else if (line.isKeyVal(":div-end")) {
+          } else if (line.isKey(":div-end") || line.isKey(":end-div")) {
             this.endDiv(-1, "div-begin");
+		  } else if (line.isKeyVal(":image")) {
+			this.endSeq();
+			this.addImage(line.value());
+		  } else if (line.isKeyVal(":table") || line.isKeyVal(":table-begin")) {
+			this.endSeq();
+			this.addTable(line.value());
+		  } else if (line.isKey(":end-table") || line.isKey(":table-end")) {
+			this.endSeq();
+			this.endTable();
+		  } else if (line.isKeyVal(":cell")) { 
+		    this.endSeq();
+			this.addCell(line.value());
+		  } else if (line.isKeyVal(":note") || line.isKeyVal(":note-begin")) {
+			this.endSeq();
+          } else if (line.isKeyVal(":local-name")) {
+            this.addHead(-1, 20, "h2", line.value(), "local-name");
+          } else if (line.isKeyVal(":source")) {
+            this.addHead(-1, 30, "h3", line.value(), "source");
+          } else if (line.isKeyVal(":head")) {
+            this.addHead(0, 40, "h4", line.value());
+          } else if (line.isKeyVal(":head2")) {
+            this.addHead(1, 50, "h5", line.value());
+          } else if (line.isKeyVal(":rubric")) {
+            this.addRubric(2, 60, "rubric", line.value());
+          } else if (line.isKeyVal(":rubric2")) {
+            this.addRubric(3, 70, "rubric2", line.value());
 		  } else if (line.isKeyVal(":image")) {
 			this.endSeq();
 			this.addImage(line.value());
