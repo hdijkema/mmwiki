@@ -26,6 +26,7 @@ if (loggedIn()) {
 	$js = "function selectLanguage() {\n";
 	$js .= "var selected = false;\n";
 	$js .= "var lang = navigator.language || navigator.userLanguage;\n";
+	$js .= "if (lang) { var idx = lang.indexOf('-');if (idx >= 0) { lang = lang.substr(0, idx); } }\n";
 	foreach($languages as $langs) {
 		$id = "lang";
 		foreach($langs as $lang) {
