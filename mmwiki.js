@@ -1067,13 +1067,17 @@ class MMWiki
 		};
 		
 		var img = get(0, "");
-		var width_perc = get(1, "100");
+		var width_perc = get(1, "");
 		var subscript = get(2, "");
 		var align = get(3, "center").toLowerCase();
-		var cl = "image-center";
+		var cl = align;
 		if (align == "left") { cl = "image-float-left"; }
 		else if (align == "right") { cl = "image-float-right"; }
-		else { align = "margin-left:auto;margin-right:auto;"; }
+		else if (align == "center"){ align = "margin-left:auto;margin-right:auto;";cl="image-center"; }
+
+		if (cl == "image-float-left" || cl == "image-float-right" || cl == "image-center") {
+			if (width_perc == "") { width_perc = "100%"; }
+		} 
 		
 		var src = this.imageProvider().getImageSrc(img);
 		
@@ -1094,7 +1098,7 @@ class MMWiki
 		} else {
 			width_perc = "";
 		}
-		
+
 		this._html += "<div " + width_perc + "class=\"" + cl + "\"" + " >" +
 		              "<div class=\"image\">" +
 					  "<img src=\"" + src + "\" style=\"width:100%;\" />";
