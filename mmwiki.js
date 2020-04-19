@@ -468,7 +468,7 @@ class MMWiki
 		this.re_end = /^\s*:end\s*$/m;
 
 		this.re_bullits = /^([*12]+)\s/;
-		this.re_literals = /\\[:{}\[\]]|\[BR\]/;
+		this.re_literals = /\\[:{}\[\]\\ ]|\[BR\]/;
 
 		this.re_cleanup_sym_open = /([CSGZR])([A-Z]*)[{]/;
 		this.re_cleanup_open = /([234PQHNMITBRCLlti^!+-]|R[234])\[([^|]+[|]){0, 1}/;
@@ -751,6 +751,8 @@ class MMWiki
                       else if (literal == "}") n_mmwiki += "@!@#125@%@";
                       else if (literal == "[") n_mmwiki += "@!@#91@%@";
                       else if (literal == "]") n_mmwiki += "@!@#93@%@";
+					  else if (literal == "\\") n_mmwiki += "@!@\\@%@";
+					  else if (literal == " " n_mmwiki += "@!@nbsp@%@";
                     } else {
                       n_mmwiki += "@!@br@%@";
                     }
@@ -770,6 +772,8 @@ class MMWiki
         var literal = m[1];
         var c = literal[0];
         if (literal == "br") { n_html += "<br />"; }
+		else if (literal == "nbsp") { n_html += "&nbsp;"; }
+		else if (literal == "\\") { n_html += "\\"; }
         else if (c >= '0' && c <= '9') { n_html += "#" + literal + ";"; }
         else { n_html += "&" + literal + ";"; }
       }, function(remain, offset) {
