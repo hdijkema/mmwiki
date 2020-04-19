@@ -752,7 +752,7 @@ class MMWiki
                       else if (literal == "[") n_mmwiki += "@!@#91@%@";
                       else if (literal == "]") n_mmwiki += "@!@#93@%@";
 					  else if (literal == "\\") n_mmwiki += "@!@\\@%@";
-					  else if (literal == " " n_mmwiki += "@!@nbsp@%@";
+					  else if (literal == " ") n_mmwiki += "@!@nbsp@%@";
                     } else {
                       n_mmwiki += "@!@br@%@";
                     }
