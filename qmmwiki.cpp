@@ -1940,13 +1940,13 @@ QString QMMWiki::toHtml(const QString &mmwiki, bool one_per_line, const QString 
             _header.setBook(line.value());
         } else if (line.isKeyVal(":h1")) {
             addHead(-1, 15, "h1", line.value(), "h1");
-        } else if (line.isKeyVal(":h1")) {
+        } else if (line.isKeyVal(":h2")) {
             addHead(-1, 15, "h2", line.value(), "h2");
-        } else if (line.isKeyVal(":h1")) {
+        } else if (line.isKeyVal(":h3")) {
             addHead(-1, 15, "h3", line.value(), "h3");
-        } else if (line.isKeyVal(":h1")) {
+        } else if (line.isKeyVal(":h4")) {
             addHead(-1, 15, "h4", line.value(), "h4");
-        } else if (line.isKeyVal(":h1")) {
+        } else if (line.isKeyVal(":h5")) {
             addHead(-1, 15, "h5", line.value(), "h5");
         } else if (line.isKeyVal(":local-name")) {
             addHead(-1, 20, "h2", line.value(), "local-name");
