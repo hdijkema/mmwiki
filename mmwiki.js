@@ -643,32 +643,6 @@ class MMWiki
 			this.addCell(line.value());
 		  } else if (line.isKeyVal(":note") || line.isKeyVal(":note-begin")) {
 			this.endSeq();
-          } else if (line.isKeyVal(":local-name")) {
-            this.addHead(-1, 20, "h2", line.value(), "local-name");
-          } else if (line.isKeyVal(":source")) {
-            this.addHead(-1, 30, "h3", line.value(), "source");
-          } else if (line.isKeyVal(":head")) {
-            this.addHead(0, 40, "h4", line.value());
-          } else if (line.isKeyVal(":head2")) {
-            this.addHead(1, 50, "h5", line.value());
-          } else if (line.isKeyVal(":rubric")) {
-            this.addRubric(2, 60, "rubric", line.value());
-          } else if (line.isKeyVal(":rubric2")) {
-            this.addRubric(3, 70, "rubric2", line.value());
-		  } else if (line.isKeyVal(":image")) {
-			this.endSeq();
-			this.addImage(line.value());
-		  } else if (line.isKeyVal(":table") || line.isKeyVal(":table-begin")) {
-			this.endSeq();
-			this.addTable(line.value());
-		  } else if (line.isKey(":end-table") || line.isKey(":table-end")) {
-			this.endSeq();
-			this.endTable();
-		  } else if (line.isKeyVal(":cell")) { 
-		    this.endSeq();
-			this.addCell(line.value());
-		  } else if (line.isKeyVal(":note") || line.isKeyVal(":note-begin")) {
-			this.endSeq();
 			this.startDiv(-1, "note");
 			this._seq_start += "<span class=\"note\">" + this.processSeq(line.value()) + "&nbsp;</span>";
 			this._seq_class = "first";
