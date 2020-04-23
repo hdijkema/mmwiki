@@ -1,5 +1,7 @@
 ﻿#include "qmmwiki.h"
 
+#include <QStack>
+
 static QString mkid(const QString &in, int n)
 {
     return QString("%1_%2").arg(in, QString::number(n));
@@ -50,14 +52,36 @@ bool QMMWiki::Line::isKeyVal(const QString &key)
     }
 }
 
-QString QMMWiki::Line::value()
+QString QMMWiki::Line::value() const
 {
     return _value;
 }
 
-bool QMMWiki::Line::operator ==(const QString &key)
+bool QMMWiki::Line::operator ==(const QString &key) const
 {
-    return _line_ci.startsWith(key);
+    return equal(key);
+}
+
+bool QMMWiki::Line::equal(const QString &key) const
+{
+    bool yes = _line_ci.startsWith(key);
+    if (yes) {
+        int i, N;
+        i = key.length();
+        N = _line_ci.length();
+
+        if (i == N) {
+            return true;
+        } else {
+            if (_line_ci[i] == ' ' || _line_ci[i] == '=') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    } else {
+        return false;
+    }
 }
 
 bool QMMWiki::Line::isEmpty() const
@@ -68,6 +92,19 @@ bool QMMWiki::Line::isEmpty() const
 QString QMMWiki::Line::line() const
 {
     return _line;
+}
+
+bool QMMWiki::Line::has(const QStringList &l) const
+{
+    foreach(QString key, l) {
+        if (equal(key)) { return true; }
+    }
+    return false;
+}
+
+bool QMMWiki::Line::startsWith(const QString &k) const
+{
+    return _line_ci.startsWith(k);
 }
 
 
@@ -1152,10 +1189,14 @@ void QMMWiki::addImage(const QString &img_pars)
     QString width_perc = get(1, "100");
     QString subscript = get(2, "");
     QString align = get(3, "center");
-    QString cl = "image-center";
+    QString cl = align;
     if (align == "left") { cl = "image-float-left"; }
     else if (align == "right") { cl = "image-float-right"; }
-    else { align = "margin-left:auto;margin-right:auto;"; }
+    else if (align == "center") { align = "margin-left:auto;margin-right:auto;";cl = "image-center"; }
+
+    if (cl == "image-float-left" || cl == "image-float-right" || cl == "image-center") {
+        if (width_perc == "") { width_perc = "100%"; }
+    }
 
     QString src = _image_provider->getImageSrc(img);
 
@@ -1613,6 +1654,7 @@ void QMMWiki::doTokenize(QMMWiki::Token &root)
             case 'H': type = Token::HIGHLIGHT;break;
             case 'C': type = Token::CLASSIFICATION;break;
             case '!': type = Token::LITERAL;break;
+            case 'l':
             case 'L': {
                 type = Token::LINK;
                 int idx = content.indexOf("|");
@@ -1883,7 +1925,7 @@ QString QMMWiki::toHtml(const QString &mmwiki, bool one_per_line, const QString 
     // iterate over all the content
 
     QStringList lines = contents.split("\n");
-    for(QString ln : lines) {
+    foreach(QString ln, lines) {
         Line line(ln);
         int level;
         QString bullit;
@@ -1894,10 +1936,22 @@ QString QMMWiki::toHtml(const QString &mmwiki, bool one_per_line, const QString 
             _no_dashes = true;
         } else if (line == ":no-dash-end") {
             _no_dashes = false;
+        } else if (line.isKeyVal(":book")) {
+            _header.setBook(line.value());
+        } else if (line.isKeyVal(":h1")) {
+            addHead(-1, 15, "h1", line.value(), "h1");
+        } else if (line.isKeyVal(":h1")) {
+            addHead(-1, 15, "h2", line.value(), "h2");
+        } else if (line.isKeyVal(":h1")) {
+            addHead(-1, 15, "h3", line.value(), "h3");
+        } else if (line.isKeyVal(":h1")) {
+            addHead(-1, 15, "h4", line.value(), "h4");
+        } else if (line.isKeyVal(":h1")) {
+            addHead(-1, 15, "h5", line.value(), "h5");
         } else if (line.isKeyVal(":local-name")) {
-            addHead(-1, 20, "h2", line.value());
+            addHead(-1, 20, "h2", line.value(), "local-name");
         } else if (line.isKeyVal(":source")) {
-            addHead(-1, 30, "h3", line.value());
+            addHead(-1, 30, "h3", line.value(), "source");
         } else if (line.isKeyVal(":head")) {
             addHead(0, 40, "h4", line.value());
         } else if (line.isKeyVal(":head2")) {
@@ -1906,9 +1960,9 @@ QString QMMWiki::toHtml(const QString &mmwiki, bool one_per_line, const QString 
             addRubric(2, 60, "rubric", line.value());
         } else if (line.isKeyVal(":rubric2")) {
             addRubric(3, 70, "rubric2", line.value());
-        } else if (line.isKeyVal(":div-begin")) {
+        } else if (line.isKeyVal(":div-begin") || line.isKeyVal(":div")) {
             startDiv(-1, line.value().trimmed(), "div-begin");
-        } else if (line == ":div-end") {
+        } else if (line == ":div-end" || line == ":end-div") {
             endDiv(-1, "div-begin");
         } else if (line.isKeyVal(":image")) {
             endSeq();
@@ -1964,6 +2018,159 @@ const QMMWiki::Toc &QMMWiki::toc()
 const QMMWiki::Toc &QMMWiki::pages()
 {
     return _pages;
+}
+
+bool QMMWiki::checkMMText(const QString &mm, QStringList &results)
+{
+    QString mmp = prepareForHtml(mm);
+
+    QStringList keywords;
+    keywords << ":begin"
+             << ":include"
+             << ":no-dash-begin" << ":no-dash-end"
+             << ":local-name"
+             << ":source"
+             << ":head" << ":head2"
+             << ":rubric" << ":rubric2"
+             << ":div-begin" << ":div-end"
+             << ":image"
+             << ":table" << ":table-begin" << ":end-table" << ":table-end" << ":cell"
+             << ":note" << ":note-begin" << ":note-end" << ":end-note"
+             << ":code" << ":end-code"
+             << ":end";
+
+    QStringList header_words;
+    header_words << ":book" << ":edition" << ":author" << ":editor"
+                 << ":abbrev" << ":latin-name" << ":source"
+                 << ":miasm" << ":tendency" << ":class";
+
+    auto checkSeq = [](bool ok, QString &seq, QStringList &results, int &symptoms, int line_nr) {
+        QStack<QChar> opens;
+
+        auto chk_close = [&opens, &results, &line_nr](int i, QChar c) {
+            if (opens.isEmpty()) {
+                results.append(tr("%1: Unexpected closer at character %2, got %3").arg(
+                                   QString::asprintf("%04d", line_nr),
+                                   QString::asprintf("%d", i),
+                                   c
+                                   )
+                               );
+                return false;
+
+            } else if (opens.top() != c) {
+                results.append(tr("%1: Wrong closer at character %2 expected %3, got %4").arg(
+                                   QString::asprintf("%04d", line_nr),
+                                   QString::number(i),
+                                   opens.top(),
+                                   c
+                                   )
+                               );
+                return false;
+            } else {
+                return true;
+            }
+        };
+
+        QString s = seq;
+        seq = "";
+        int c_nr = 0;
+
+        int i, N;
+        for(i = 0, N = s.length(); i < N; i++) {
+            c_nr += 1;
+            if (s[i] == '{') { opens.push('}');symptoms += 1; }
+            else if (s[i] == '[') { opens.push(']'); }
+            else if ((s[i] == '}' || s[i] == ']')) {
+                if (chk_close(c_nr, s[i])) {
+                    opens.pop();
+                } else {
+                    ok = false;
+                }
+            } else if (s[i] == '\n') {
+                line_nr += 1;
+                c_nr = 0;
+            }
+        }
+
+        if (opens.isEmpty()) {
+            return ok;
+        } else {
+            QString closers = "";
+            while(!opens.isEmpty()) { closers.append(opens.top()); opens.pop(); }
+            results.append(tr("%1: Not enough closers at character %2, expected %3").arg(
+                               QString::asprintf("%04d", line_nr),
+                               QString::asprintf("%d", c_nr),
+                               closers
+                               )
+                           );
+            return false;
+        }
+    };
+
+    bool ok = true;
+    bool in_head = true;
+    bool in_content = false;
+    int line_nr = 0;
+    int seq_start_line_nr = -1;
+    QStringList lines = mmp.split("\n");
+    QString seq = "";
+    int symptoms = 0;
+
+    foreach(QString ln, lines) {
+        Line l(ln);
+        line_nr += 1;
+        if (in_head) {
+            if (!l.has(header_words)) {
+                if (l.startsWith(":begin[")) {
+                    in_head = false;
+                    in_content = true;
+                    seq_start_line_nr = line_nr;
+                } else if (!l.isEmpty()) {
+                    results.append(tr("%1: Unknown keyword in header (%2)").arg(
+                                       QString::asprintf("%04d", line_nr),
+                                       l.line()
+                                       )
+                                   );
+                    ok = false;
+                }
+            }
+        } else {
+            if (l.isEmpty()) {
+                ok = checkSeq(ok, seq, results, symptoms, seq_start_line_nr);
+                seq_start_line_nr = -1;
+            } else if (l.has(keywords)) {
+                if (l.startsWith(":begin[")) {
+                    if (in_content) {
+                        results.append(tr("%1: Missing :end (%2)").arg(
+                                           QString::asprintf("%04d", line_nr),
+                                           l.line()
+                                           )
+                                       );
+                        ok = false;
+                    } else {
+                        in_content = true;
+                    }
+                } else if (l == ":end") {
+                    in_content = false;
+                }
+                ok = checkSeq(ok, seq, results, symptoms, seq_start_line_nr);
+                seq_start_line_nr = -1;
+            } else {
+                if (seq_start_line_nr < 0) { seq_start_line_nr = line_nr; }
+                seq += l.line() + "\n";
+            }
+        }
+    }
+
+    if (in_content) {
+        results.append(tr("%1: Missing trailing :end").arg(QString::asprintf("%04d", line_nr)));
+        ok = checkSeq(false, seq, results, symptoms, seq_start_line_nr);
+    }
+
+    results.append(tr("%1: Symptoms = %2").arg(QString::asprintf("%04d", 10), QString::asprintf("%d", symptoms)));
+    if (symptoms == 0) { ok = false; }
+
+    return ok;
 }
 
 QString QMMWiki::prepareForSymptoms(QString s)
