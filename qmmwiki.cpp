@@ -891,7 +891,7 @@ void QMMWiki::addDynamic()
 	_html.append("<script>\n");
 }
 
-void QMMWiki::endDynamic() {
+void QMMWiki::addEndDynamic() {
 	_html.append("</script>\n");
 }
 
