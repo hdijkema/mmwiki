@@ -886,6 +886,21 @@ void QMMWiki::addInclude(const QString &incl)
     if (div_class != "") _html.append("</div>");
 }
 
+void QMMWiki::addDynamic()
+{
+	_html.append("<script>\n");
+}
+
+void QMMWiki::endDynamic() {
+	_html.append("</script>\n");
+}
+
+void QMMWiki::addJs(const QString &line)
+{
+	_html.append(line);
+	_html.append("\n");
+}
+
 void QMMWiki::addHead(int toc, int level, const QString &h, const QString &l, const QString &cl)
 {
     endDiv(level, h);
@@ -1932,6 +1947,12 @@ QString QMMWiki::toHtml(const QString &mmwiki, bool one_per_line, const QString 
 
         if (line.isKeyVal(":include")) {
             addInclude(line.value());
+		} else if (line.isKey(":dynamic")) {
+			addDynamic();
+		} else if (line.isKeyVal(":js")) {
+			addJs(line.value());
+		} else if (line.isKey(":end-dynamic")) {
+			addEndDynamic();
         } else if (line == ":no-dash-begin") {
             _no_dashes = true;
         } else if (line == ":no-dash-end") {
