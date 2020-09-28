@@ -415,6 +415,10 @@ private:
     void addCell(const QString &value);
 
     void addImage(const QString &img_pars);
+	
+	void addDynamic();
+	void addEndDynamic();
+	void addJs(const QString &line);
 
 private:
     QString processSeq(QString s, const QString &cl = "", const QString &start = "", bool par = false, int min_grade = 0);
