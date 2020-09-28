@@ -322,6 +322,12 @@ class MMWiki_ImageProvider
 		var imgs = new Array();
 		return imgs;
 	}
+
+    getVideoSrcs(video)
+    {
+        var videosrcs = new Array();
+        return videosrcs;
+    }
 }
 
 class MMWiki_MetaProvider
@@ -632,6 +638,9 @@ class MMWiki
 		  } else if (line.isKeyVal(":image")) {
 			this.endSeq();
 			this.addImage(line.value());
+          } else if (line.isKeyVal(":video")) {
+            this.endSeq();
+            this.addVideo(line.value());
 		  } else if (line.isKeyVal(":table") || line.isKeyVal(":table-begin")) {
 			this.endSeq();
 			this.addTable(line.value());
@@ -1029,6 +1038,40 @@ class MMWiki
       html = this.implementHtml(html);
 
       return html;
+    }
+
+    addVideo(video_pars)
+    {
+        var v = video_pars.split(',');
+
+        var get = function(idx, def) {
+            if (v.length > idx) return v[idx].trim();
+            return def;
+        };
+
+        var video = get(0, "");
+        var width_perc = get(1, "");
+        var width = "100%";
+
+        if (width_perc != "") {
+           var m = width_perc.match(this.re_width);
+           if (m) {
+              var w = m[1];
+              var unit = m[2];
+              if (unit == "") unit = "%";
+              width = w + unit;
+           }
+        }
+
+        var srcs = this.imageProvider().getVideoSrcs(video);
+
+        var me = this;
+        var f = function(src) { me._html  += "<source src=\"" + src.link + "\" type=\"video/" + src.ext + "\">"; };
+
+        this._html += "<video width=\"" + width +"\" controls>";
+        srcs.forEach(f);
+        this._html += "Your browser does not support the video tag.";
+        this._html += "</video>";
     }
 	
 	addImage(img_pars)

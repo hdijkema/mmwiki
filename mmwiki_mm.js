@@ -137,6 +137,14 @@ class MMImageProvider
 			return new Array();
 		}
 	}
+
+   getVideoSrcs(img) {
+      var videos = new Array();
+      videos.push({ link: img + ".mp4", ext: "mp4" });
+      videos.push({ link: img + ".webm", ext: "webm" });
+      videos.push({ link: img + ".ogv", ext: "ogg" });
+      return videos;
+   }
 }
 
 class MMIncludeProvider
