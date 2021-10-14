@@ -16,10 +16,7 @@ require_once("config.php");
 	<link rel="stylesheet" id="custom_css" href="custom.css"></link>
 	<link rel="icon" href="favicon.png" sizes="32x32" />
 	<link rel="icon" href="favicon.png" sizes="192x192" />	
-	<script src="mmwiki.js" type="text/javascript" charset="utf-8"></script>
-	<script src="remedies.js" type="text/javascript" charset="utf-8"></script>
-	<script src="images.js" type="text/javascript" charset="utf-8"></script>
-	<script src="mmwiki_mm.js" type="text/javascript" charset="utf-8"></script>
+	<script src="jquery/jquery.js" type="text/javascript" charset-"utf-8"></script>
 	<script src="ace/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 	<script src="custom.js" type="text/javascript" charset="utf-8"></script>
 	<title>Materia Medica Wiki</title>
@@ -38,6 +35,7 @@ require_once("config.php");
 			<input id="image_upload_btn" type="file" name="image_file" />
 			<button id="image_upload_now" type="button" onclick="document.mmwiki_upload_image();">Uploaden</button>
 			<input type="text" id="language_code" value="" placeholder="Language" />
+			<button id="get_mm_from_url" type="button" onclick="document.mmwiki_get_from_url();">HomeoInt</button>
 			<button id="close_btn" type="button" style="float:right;;margin-right:2em;" onclick="document.mmwiki_close_editor();">Close Editor</button>
 			<button id="login_btn" type="button" style="display:none;float:right;" onclick="document.mmwiki_login();">Login</button>
 			<button id="logout_btn" type="button" style="display:none;float:right;" onclick="document.mmwiki_logout();">Logout</button>
@@ -97,7 +95,9 @@ require_once("config.php");
 	$contents = str_replace("'", "\\'", $contents);
 	
 	?>
-	<script>
+	<script type="module">
+		import { MMWikiMM, mmwikiLanguage } from './mmwiki_mm.js';
+		
 		document.mmwiki_updater = function(txt) {
 			if (document.edit_css) {
 				txt = document.mmwiki_txt;
@@ -188,7 +188,20 @@ require_once("config.php");
 		if (isset($_GET['login'])) { $login_btn_yes = 1; }
 		else { $login_btn_yes = 0; }
 		?>
-		<script>
+		<script type="module">
+			import { MMWikiMM, 
+					 mmwikiLanguage, mmwikiSetLanguage, 
+					 mmwikiCookie, mmwikiSetCookie, mmwikiMakeMovable, 
+					 mmwikiPing, 
+					 mmwikiPublish, mmwikiPublishAll,
+					 mmwikiSave, mmwikiSaveCss, 
+					 mmwikiGetCss, 
+					 mmwikiUploadImage,
+					 mmwikiLogout, mmwikiLogin
+			} from './mmwiki_mm.js';
+			import { MMWikiFetcher, kentLecturesParser } from './mmwiki_fetcher.js';
+
+
 			var context = <?php echo "'$context'"; ?>;
 			var page = <?php echo "'$page'"; ?>;
 			var contents = <?php echo "'$contents'"; ?>;
@@ -207,6 +220,7 @@ require_once("config.php");
 			var img_upload_now = document.getElementById('image_upload_now');
 			var image_name = document.getElementById('image_name');
 			var lang_code = document.getElementById('language_code');
+			var get_mm_from_url = document.getElementById('get_mm_from_url');
 			var login_btn = document.getElementById('login_btn');
 			var logout_btn = document.getElementById('logout_btn');
 			var editor_created = false;
@@ -248,6 +262,55 @@ require_once("config.php");
 						alert("Could not logout");
 					}
 				);
+			};
+			
+			document.mmwiki_get_from_url = function() {
+				var el = document.createElement('div');
+				$(el).addClass("dialog");
+				$(el).attr('id', 'gfu_dialog');
+				$(el).html(
+					'<table>' +
+					'<tr><th colspan="2">Fetch MM From URL</th></tr>' +
+					'<tr><td style=\"width:30%\">Url:</td><td><input type="text" id="gfu_url" /></td></tr>' + 
+					'<tr><td>Title:</td><td><input type="text" id="gfu_title" /></td></tr>' +
+					'<tr><td>Author:</td><td><input type="text" id="gfu_author" /></td></tr>' + 
+					'<tr><td>Editor:</td><td><input type="text" id="gfu_editor" /></td></tr>' +
+					'<tr><td>Edition:</td><td><input type="text" id="gfu_edition" /></td></tr>' +
+					'<tr><td>Language:</td><td><input type="text" id="gfu_lang" val="en" /></td></tr>' +
+					'<tr><td>Version:</td><td><input type="text" id="gfu_version" /></td></tr>' +
+					'<tr><td>Id:</td><td><input type="text" id="gfu_id" /></td></tr>' +
+					'<tr><td>Context:</td><td><input type="text" id="gfu_context" /></td></tr>' +
+					'<tr><td colspan="2" id="gfu_progress"></td></tr>' +
+					'<tr><td><button id="gfu_cancel">Cancel</button></td><td><button id="gfu_ok">Fetch</button></td></tr>' +
+					'</table>'
+				);
+				var body = document.getElementsByTagName('body')[0];
+				$(body).append(el);
+				
+				var fields = [ 'url', 'title', 'author', 'editor', 'edition', 'version', 'id', 'lang', 'context' ];
+				fields.forEach(function(e) {
+					$('#gfu_' + e).val(mmwikiCookie('gfu_' + e));
+				});
+				
+				$('#gfu_cancel').click(function() { 
+					$('#gfu_dialog').remove(); 
+				});
+				$('#gfu_ok').click(function() {
+					var url = mmwikiSetCookie('gfu_url', $('#gfu_url').val().trim());
+					var t = mmwikiSetCookie('gfu_title', $('#gfu_title').val().trim());
+					var a = mmwikiSetCookie('gfu_author', $('#gfu_author').val().trim());
+					var ed  = mmwikiSetCookie('gfu_editor', $('#gfu_editor').val().trim());
+					var edt  = mmwikiSetCookie('gfu_edition', $('#gfu_edition').val().trim());
+					var v = mmwikiSetCookie('gfu_version', $('#gfu_version').val().trim());
+					var i = mmwikiSetCookie('gfu_id', $('#gfu_id').val().trim());
+					var l = mmwikiSetCookie('gfu_lang', $('#gfu_lang').val().trim());
+					var c = mmwikiSetCookie('gfu_context', $('#gfu_context').val().trim());
+					
+					var progr_el = document.getElementById('gfu_progress');
+					var fetcher = new MMWikiFetcher(url, c, { title: t, author: a, editor: ed, edition: edt, version: v, id: i, lang: l }, progr_el);
+					fetcher.setParser(kentLecturesParser());
+					fetcher.run();
+				});
 			};
 			
 			document.mmwiki_main = function() {

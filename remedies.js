@@ -1,4 +1,4 @@
-var mmwiki_remedies = { 'A-dnitroph': 'Alpha-dinitrophenolum'
+export var mmwiki_remedies = { 'A-dnitroph': 'Alpha-dinitrophenolum'
 , 'A-ray': 'Alpha rays'
 , 'Abel': 'Abelmoschus'
 , 'Abies-bs': 'Abies balsamea'

@@ -1,5 +1,6 @@
 // vim: ts=4 sts=4 sw=4 noet :
 // Class stack
+
 class MMWiki_Stack
 {
   constructor() {
@@ -258,7 +259,7 @@ class MMWiki_Header
   source(letter) { return this._sources[letter]; }
 }
 
-class MMWiki_ImageSrc 
+export class MMWiki_ImageSrc 
 {
 	constructor(auth = "", authU = "", src = "", srcU = "", lic = "", licU = "", imgSrc = "", imgAlt ="")
 	{
@@ -299,7 +300,7 @@ class MMWiki_ImageSrc
 	}
 }
 
-class MMWiki_IncludeProvider
+export class MMWiki_IncludeProvider
 {
 	constructor() { }
 
@@ -308,7 +309,7 @@ class MMWiki_IncludeProvider
 	}
 }
 
-class MMWiki_ImageProvider
+export class MMWiki_ImageProvider
 {
 	constructor() { }
 
@@ -330,7 +331,7 @@ class MMWiki_ImageProvider
     }
 }
 
-class MMWiki_MetaProvider
+export class MMWiki_MetaProvider
 {
 	constructor()
 	{
@@ -423,7 +424,7 @@ class MMWiki_MetaProvider
 }
 
 
-class MMWiki_LinkProvider
+export class MMWiki_LinkProvider
 {
   mkLinkHRef(link, content, tab_target)
   {
@@ -437,7 +438,7 @@ class MMWiki_LinkProvider
   }
 }
 
-class MMWiki_RemedyProvider
+export class MMWiki_RemedyProvider
 {
   unifyAbbrev(a)
   {
@@ -454,7 +455,14 @@ class MMWiki_RemedyProvider
   getLatinName(uabbrev) { return uabbrev; }
 }
 
-class MMWiki
+export class MMWiki_HeaderGenerator
+{
+	insertMeta(mmwiki, contents) {
+		return contents;
+	}
+}
+
+export class MMWiki
 {
     ///////////////////////////////////////////////////////////////
 
@@ -492,6 +500,7 @@ class MMWiki
 		this._meta_provider.setMMWiki(this);
 		this._img_provider = new MMWiki_ImageProvider();
 		this._include_provider = new MMWiki_IncludeProvider();
+		this._header_generator = new MMWiki_HeaderGenerator();
 		this._incl_prefix = "";
 
 		this._toc = new MMWiki_Toc();
@@ -527,6 +536,9 @@ class MMWiki
 
     remedyProvider() { return this._remedy_provider; }
     setRemedyProvider(r) { this._remedy_provider = r; }
+    
+    headerGenerator() { return this._header_generator; }
+    setHeaderGenerator(h) { this._header_generator = h; }
 
 	includeProvider() { return this._include_provider; }
 	setIncludeProvider(i) { this._include_provider = i; }
@@ -570,6 +582,7 @@ class MMWiki
 
         // extract contents
         var contents = this.extractContents(language);
+        contents = this.headerGenerator().insertMeta(this, contents);
         contents = this.prepareForHtml(contents);
 
         // highlighting
@@ -982,7 +995,7 @@ class MMWiki
     {
       var rubr = r.trim();
       if (rubr != "") {
-        rubr = rubr.substr(0, 1).toUpperCase() + rubr.substr(1).toLowerCase();
+        rubr = rubr.substr(0, 1).toUpperCase() + rubr.substr(1); // .toLowerCase();
         if (rubr.substr(rubr.length - 1, 1) == ".") { rubr = rubr.substr(0, rubr.length - 1); }
         if (rubr.substr(rubr.length - 1, 1) == ":") { rubr += " "; }
         else { rubr += ": "; }
@@ -1050,7 +1063,8 @@ class MMWiki
         };
 
         var video = get(0, "");
-        var width_perc = get(1, "");
+        var image = get(1, "");
+        var width_perc = get(2, "");
         var width = "100%";
 
         if (width_perc != "") {
@@ -1276,6 +1290,8 @@ class MMWiki
 
     generateHtml(t)
     {
+      if (t === undefined) return;
+      
       var o = "", c = "", cl = "", m = "";
       var content = t.contentIsSet() ? t.content() : "";
       var modifier = t.modifierIsSet() ? t.modifier() : "";
@@ -1358,7 +1374,11 @@ class MMWiki
       var content = t.subTokens()[2];
 	  var href = this.generateHtml(link);
 	  var a = this.generateHtml(content);
-      return this.linkProvider().mkLinkHRef(href, a, tab_target);
+	  if (href === undefined || content === undefined) { 
+	  	return "<i><b>ERROR</b></i>"; 
+	  } else {
+	      return this.linkProvider().mkLinkHRef(href, a, tab_target);
+	  }
     }
 
     mkAnchor(n)
@@ -1787,3 +1807,5 @@ class MMWiki
 	  return all_languages;
     }
 }
+
+

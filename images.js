@@ -1,4 +1,6 @@
-var mmwiki_images = { 'junc': new Array( new MMWiki_ImageSrc('Christian Fischer', 'https://commons.wikimedia.org/w/index.php?curid=212034', 'Source', 'https://commons.wikimedia.org/w/index.php?curid=212034', 'CC BY-SA 3.0', 'https://creativecommons.org/licenses/by-sa/3.0', '/images/junc.jpg', 'junc'))
+import { MMWiki_ImageSrc } from './mmwiki.js';
+
+export var mmwiki_images = { 'junc': new Array( new MMWiki_ImageSrc('Christian Fischer', 'https://commons.wikimedia.org/w/index.php?curid=212034', 'Source', 'https://commons.wikimedia.org/w/index.php?curid=212034', 'CC BY-SA 3.0', 'https://creativecommons.org/licenses/by-sa/3.0', '/images/junc.jpg', 'junc'))
 , 'lac-v': new Array( new MMWiki_ImageSrc('Keith Weller/USDA', 'Keith Weller/USDA', 'Source', 'https://commons.wikimedia.org/w/index.php?curid=808501', 'Publiek domein', 'Publiek domein', '/images/lac_v.jpg', 'lac-v'))
 , 'othon-n': new Array( new MMWiki_ImageSrc('unknown', '', 'Source', '', 'unknown', '', '/images/othon_n.jpg', 'othon-n'))
 , 'arg-n': new Array( new MMWiki_ImageSrc('Epop', 'https://commons.wikimedia.org/wiki/User:Epop', 'Source', 'https://commons.wikimedia.org/w/index.php?curid=11016572', 'Public Domain', 'Public Domain', '/images/arg_n.jpg', 'arg-n'), new MMWiki_ImageSrc('Xavier13540 at Chinese Wikipedia', 'https://en.wikipedia.org/wiki/zh:User:Xavier13540', 'Source', 'https://commons.wikimedia.org/w/index.php?curid=11034566', 'Public Domain', 'Public Domain', '/images/arg_n_1.jpg', 'arg-n'))

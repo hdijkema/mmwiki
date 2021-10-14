@@ -41,7 +41,8 @@ body {
  span.grade3, span.grade3 a { font-weight: bold; color: #aa664e; }
  span.grade4, span.grade4 a { font-weight: bold; color: #a40fd6; }
 
- span.remedy1, span.remedy1 a { color: #008000; font-style: italic; }
+ /*span.remedy1, span.remedy1 a { color: #008000; font-style: italic; }*/
+ span.remedy1, span.remedy1 a { color: #21c90a; font-style: italic; text-decoration: underline; }
  span.remedy2, span.remedy2 a { color: #1b83fa; font-style: italic; }
  span.remedy3, span.remedy3 a { color: #aa664e; font-style: italic; font-weight: bold; }
  span.remedy4, span.remedy4 a { color: #a40fd6; font-style: italic; font-weight: bold; }
@@ -90,4 +91,6 @@ body {
  span.anchor { z-index:20;visibility:hidden;display:inline;position:relative; }
 
  span.inline-image img { height: 1.10em;box-shadow: none;vertical-align:-0.20em; }
+
+ .video { margin-left: auto; margin-right: auto; text-align: center; }
 
