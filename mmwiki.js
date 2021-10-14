@@ -1088,7 +1088,7 @@ export class MMWiki
         srcs.forEach(f);
         this._html += "Your browser does not support the video tag.";
         this._html += "</video>";
-        this._html += '</div>";
+        this._html += '</div>';
     }
 	
 	addImage(img_pars)
