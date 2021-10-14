@@ -1078,14 +1078,17 @@ export class MMWiki
         }
 
         var srcs = this.imageProvider().getVideoSrcs(video);
+        var img = this.imageProvider().getImageSrc(image);
 
         var me = this;
-        var f = function(src) { me._html  += "<source src=\"" + src.link + "\" type=\"video/" + src.ext + "\">"; };
+        var f = function(src) { me._html  += "<source src=\"" + src.link + "\" type=\"video/" + src.ext + "\" poster=\"" + img + "\" >"; };
 
-        this._html += "<video width=\"" + width +"\" controls>";
+        this._html += "<div class=\"video\">";
+        this._html += "<video width=\"" + width +"\" controls poster=\"" + img + "\" >";
         srcs.forEach(f);
         this._html += "Your browser does not support the video tag.";
         this._html += "</video>";
+        this._html += '</div>";
     }
 	
 	addImage(img_pars)
