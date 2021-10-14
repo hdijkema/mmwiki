@@ -7,6 +7,10 @@
 * and links for the Materia Medica Wiki pages. 
 *****************************************************************/
 
+import { MMWiki, MMWiki_ImageSrc, MMWiki_IncludeProvider, MMWiki_ImageProvider, MMWiki_MetaProvider, MMWiki_LinkProvider, MMWiki_RemedyProvider  } from './mmwiki.js';
+import { mmwiki_images } from './images.js';
+import { mmwiki_remedies } from './remedies.js';
+
 function tr(txt)
 {
 	return txt;
@@ -172,7 +176,7 @@ class MMIncludeProvider
 	}
 }
 
-class MMWikiMM 
+export class MMWikiMM 
 {
 		constructor(context)
 		{
@@ -364,7 +368,7 @@ function mmwikiPublishAllPage(incl_provider, context, pages, page_idx, f_progres
 	}
 }
 
-function mmwikiPublishAll(context, f_progress, f_ok, f_error)
+export function mmwikiPublishAll(context, f_progress, f_ok, f_error)
 {
    var xhr = new XMLHttpRequest();
    var url = "get_pages.php";
@@ -391,7 +395,7 @@ function mmwikiPublishAll(context, f_progress, f_ok, f_error)
     xhr.send();
 }
 
-function mmwikiPublish(context, page, content, f_ok, f_error)
+export function mmwikiPublish(context, page, content, f_ok, f_error)
 {
 	var m = new MMWikiMM(context);
 	var l = m.getLanguages(content);
@@ -458,18 +462,18 @@ function mmwikiPublish(context, page, content, f_ok, f_error)
 	);
 }
 
-function mmwikiGetCss(f_ok, f_error)
+export function mmwikiGetCss(f_ok, f_error)
 {
 	var incl_prov = new MMIncludeProvider();
 	incl_prov.getPage("custom.css", f_ok, f_error);
 }
 
-function mmwikiSaveCss(css, f_ok, f_error)
+export function mmwikiSaveCss(css, f_ok, f_error)
 {
 	mmwikiSave("css", "custom.css", css, f_ok, f_error);
 }
 
-function mmwikiSave(context, page, content, f_ok, f_error)
+export function mmwikiSave(context, page, content, f_ok, f_error)
 {
 	var xhr = new XMLHttpRequest();
 	var url = "save.php";
@@ -491,7 +495,7 @@ function mmwikiSave(context, page, content, f_ok, f_error)
 	xhr.send(data);
 }
 
-function mmwikiLogin(account, passwd, f_ok, f_error)
+export function mmwikiLogin(account, passwd, f_ok, f_error)
 {
 	var xhr = new XMLHttpRequest();
 	var url = "login.php";
@@ -512,10 +516,10 @@ function mmwikiLogin(account, passwd, f_ok, f_error)
 	xhr.send(data);
 }
 
-function mmwikiPing(f_ok, f_error)
+export function mmwikiPing(f_ok, f_error)
 {
   var xhr = new XMLHttpRequest();
-   var url = "ping.php";
+   var url = "/ping.php";
    xhr.open("GET", url, true);
    xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && xhr.status === 200) {
@@ -527,7 +531,7 @@ function mmwikiPing(f_ok, f_error)
    xhr.send();
 }
 
-function mmwikiLogout(f_ok, f_error) 
+export function mmwikiLogout(f_ok, f_error) 
 {
 	var xhr = new XMLHttpRequest();
 	var url = "logout.php";
@@ -543,7 +547,7 @@ function mmwikiLogout(f_ok, f_error)
 }
 
 
-function mmwikiUploadImage(context, page, req_name, image_file, image_name, f_ok, f_error)
+export function mmwikiUploadImage(context, page, req_name, image_file, image_name, f_ok, f_error)
 {
 	var req = new XMLHttpRequest();
 	var formData = new FormData();
@@ -568,7 +572,7 @@ function mmwikiUploadImage(context, page, req_name, image_file, image_name, f_ok
 
 var mmwiki_custom_language = "";
 
-function mmwikiLanguage()
+export function mmwikiLanguage()
 {
 	if (mmwiki_custom_language != "") {
 		return mmwiki_custom_language;
@@ -584,13 +588,13 @@ function mmwikiLanguage()
 	}
 }
 
-function mmwikiSetLanguage(lang)
+export function mmwikiSetLanguage(lang)
 {
 	mmwiki_custom_language = lang.trim();
 }
 
 
-function mmwikiCookie(cname) {
+export function mmwikiCookie(cname) {
   var name = cname + "=";
   var decodedCookie = decodeURIComponent(document.cookie);
   var ca = decodedCookie.split(';');
@@ -606,7 +610,12 @@ function mmwikiCookie(cname) {
   return "";
 }
 
-function mmwikiMakeMovable(id)
+export function mmwikiSetCookie(cname, val) {
+	document.cookie = cname + '=' + val;
+	return val;
+}
+
+export function mmwikiMakeMovable(id)
 {
 	var mousePosition;
 	var offset = [0,0];

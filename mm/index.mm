@@ -17,6 +17,7 @@ L[wiki://404|404]
 
 * L[wiki://mm_boericke/index|Boericke - Materia Medica]
 * L[wiki://mm_clarke/index|J.H. Clarke - A dictionary of Practical Materia Medica]
+* L[wiki://mm_kent_lectures/index]Kent - Lectures of Materia Medica]
 
 :end
 
@@ -31,5 +32,6 @@ L[wiki://404|404]
 
 * L[wiki://mm_boericke/index|Boericke - Materia Medica]
 * L[wiki://mm_clarke/index|J.H. Clarke - A dictionary of Practical Materia Medica]
+* L[wiki://mm_kent_lectures/index|Kent - Lectures of Materia Medica]
 
 :end
